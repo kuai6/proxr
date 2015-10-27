@@ -1,0 +1,14 @@
+{
+    "name": "ProxR Application",
+    "description": "",
+    "license": "",
+    "keywords": [],
+    "require": {
+        "php": ">=5.5",
+        "zendframework/zftool": "*",
+        "fabpot/php-cs-fixer" : "*",
+        "doctrine/orm": "*",
+        "doctrine/migrations": "*",
+        "zendframework/zendframework": "^2.5"
+    }
+}
