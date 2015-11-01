@@ -12,5 +12,17 @@
         "doctrine/orm": "*",
         "doctrine/migrations": "*",
         "zendframework/zendframework": "^2.5"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "mkdir -p data/cache; chmod -R 777 data/cache",
+            "mkdir -p data/logs;  chmod -R 777 data/logs"
+        ],
+        "post-update-cmd" : [
+            "chmod -R 777 data/cache",
+            "chmod -R 777 data/logs",
+            "sh bin/classmap_gen.sh",
+            "sh bin/templatemap_gen.sh"
+        ]
     }
 }

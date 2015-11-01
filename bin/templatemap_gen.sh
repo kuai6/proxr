@@ -3,14 +3,6 @@
 DIR="$( cd "$( dirname "$0" )" && pwd )"
 projectDir=`dirname $DIR`
 moduleDirs=`ls $projectDir/module`
-while true; do
-    read -p "Do you wish to delete old template_map file?" yn
-    case $yn in
-        [Yy]* ) delMap=true; break;;
-        [Nn]* ) delMap=false;break;;
-        * ) echo "Please answer yes or no.";;
-    esac
-done
 
 for dir in $moduleDirs
 do
