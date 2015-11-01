@@ -41,7 +41,7 @@ class ConsoleController extends AbstractActionController
             ],
         ];
 
-        if(!in_array($options['daemonName'], array_keys($daemons))){
+        if (!in_array($options['daemonName'], array_keys($daemons))) {
             throw new \Exception(sprintf('Daemon with name %s not found', $options['daemonName']));
         }
 
