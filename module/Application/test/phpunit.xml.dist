@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<phpunit
+        bootstrap="Bootstrap.php"
+        colors="true"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        verbose="true"
+        stopOnFailure="false"
+        processIsolation="false"
+        backupGlobals="false"
+        syntaxCheck="true"
+        >
+    <testsuites>
+        <testsuite name="ApplicationTest">
+            <directory>./ApplicationTest</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory>./ApplicationTest</directory>
+        </whitelist>
+    </filter>
+    <logging>
+        <log type="coverage-php" target=".reports/coverage/coverage-phpunit.cov"/>
+    </logging>
+</phpunit>
