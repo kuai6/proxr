@@ -10,7 +10,7 @@ use Zend\Log\Writer\Stream;
 
 /**
  * Class AbstractDaemonLite
- * @package MteBase\Daemon
+ * @package Application\Daemon
  */
 abstract class AbstractDaemonLite
 {

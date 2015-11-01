@@ -8,7 +8,7 @@ use Zend\Cache\Storage;
 
 /**
  * Class StorageFactory
- * @package MteBase\Storage
+ * @package Application\Storage
  */
 abstract class StorageFactory
 {
