@@ -5,13 +5,13 @@ php=/usr/bin/php
 installationName="proxr"
 
 if [[ $USER != $uid ]]; then
-        if [[ $EUID -ne 0 ]]; then
-                echo "This script must be run as $uid"
-        exit 1
-        else
-                sudo -u $uid -s "$0 $1 $2 $3";
-                exit 0;
-        fi;
+    if [[ $EUID -ne 0 ]]; then
+        echo "This script must be run as $uid"
+    exit 1
+    else
+        sudo -u $uid -s "$0 $1 $2 $3";
+        exit 0;
+    fi;
 fi;
 
 . /etc/init.d/functions
@@ -27,7 +27,7 @@ case "$1" in
         echo -n "Starting Device Daemon"
         $php $prefix/public/index.php daemon device $1
         echo_success
-         echo;
+        echo;
     ;;
     stop)
         echo -n "Stopping Main Daemon"
@@ -38,7 +38,6 @@ case "$1" in
         $php $prefix/public/index.php daemon device $1
         echo_success
         echo;
-
     ;;
     *)
         echo "Usage: /etc/init.d/proxr [start|stop|restart]"
