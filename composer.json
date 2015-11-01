@@ -5,6 +5,8 @@
     "keywords": [],
     "require": {
         "php": ">=5.5",
+        "ext-pcntl": "*",
+        "ext-posix" : "*",
         "zendframework/zftool": "*",
         "fabpot/php-cs-fixer" : "*",
         "doctrine/orm": "*",
