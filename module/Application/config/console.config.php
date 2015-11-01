@@ -13,6 +13,15 @@ return [
                         ],
                     ],
                 ],
+                'daemon' => [
+                    'options' => [
+                        'route' => 'daemon <daemonName> (start|stop|restart):command',
+                        'defaults' => [
+                            'controller' => 'Application\Controller\Console',
+                            'action' => 'daemon',
+                        ],
+                    ],
+                ]
             ],
         ],
     ],

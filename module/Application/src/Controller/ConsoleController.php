@@ -1,7 +1,8 @@
 <?php
 namespace Application\Controller;
 
-use Application\Daemon\TestDaemon;
+use Application\Daemon\DeviceDaemon;
+use Application\Daemon\MainDaemon;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\MvcEvent;
 use Zend\Console\Request as ConsoleRequest;
@@ -24,13 +25,38 @@ class ConsoleController extends AbstractActionController
         return parent::onDispatch($e);
     }
 
+
+    public function daemonAction()
+    {
+        /** @var ConsoleRequest $request */
+        $request = $this->getRequest();
+        $options = $request->getParams()->toArray();
+
+        $daemons = [
+            'main' => [
+                'class' => MainDaemon::class
+            ],
+            'device' => [
+                'class' => DeviceDaemon::class,
+            ],
+        ];
+
+        if(!in_array($options['daemonName'], array_keys($daemons))){
+            throw new \Exception(sprintf('Daemon with name %s not found', $options['daemonName']));
+        }
+
+        $daemonOptions = $daemons[$options['daemonName']];
+        $daemon = $this->getServiceLocator()->get($daemonOptions['class']);
+        $daemon->$options['command']();
+    }
+
     /**
      * Test daemon Action
      */
     public function testAction()
     {
-        /** @var TestDaemon $daemon */
-        $daemon = $this->getServiceLocator()->get('Application\Daemon\TestDaemon');
+        /** @var DeviceDaemon $daemon */
+        $daemon = $this->getServiceLocator()->get('Application\Daemon\DeviceDaemon');
         /** @var ConsoleRequest $request */
         $request = $this->getRequest();
         $options = $request->getParams()->toArray();

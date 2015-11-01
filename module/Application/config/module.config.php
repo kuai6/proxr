@@ -4,6 +4,8 @@ namespace Application;
 
 use Application\Controller\ConsoleController;
 use Application\Controller\IndexController;
+use Application\Daemon\DeviceDaemon;
+use Application\Daemon\MainDaemon;
 use Application\Daemon\TestDaemon;
 
 return array_merge(
@@ -62,7 +64,9 @@ return array_merge(
             'translator' => 'Zend\Mvc\Service\TranslatorServiceFactory',
         ],
         'invokables' => [
-            'Application\Daemon\TestDaemon' => TestDaemon::class,
+            TestDaemon::class => TestDaemon::class,
+            DeviceDaemon::class => DeviceDaemon::class,
+            MainDaemon::class => MainDaemon::class,
         ]
     ],
     'translator' => [
