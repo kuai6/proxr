@@ -8,6 +8,6 @@ return [
 
         // this is specific to this project
         'webPath' => __DIR__ . '/../../public/assets',
-        'basePath' => __DIR__ . '/../../public/assets',
+        'basePath' => 'assets',
     ],
 ];
