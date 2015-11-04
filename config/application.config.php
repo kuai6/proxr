@@ -13,6 +13,8 @@ return [
         'DoctrineModule',
         'DoctrineORMModule',
 
+        'Kuai6\\Queue',
+
         'Application',
     ],
 
