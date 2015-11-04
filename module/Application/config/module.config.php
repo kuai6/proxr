@@ -8,6 +8,7 @@ use Application\Daemon\TestDaemon;
 
 return array_merge(
     include 'console.config.php',
+    include 'doctrine.config.php',
     [
     'router' => [
         'routes' => [
