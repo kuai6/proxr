@@ -9,6 +9,12 @@ $finder = Symfony\CS\Finder\DefaultFinder::create()
         if (strstr($file->getPath(), 'compatibility')) {
             return false;
         }
+        if(
+            strstr($file->getPath(), 'autoload_classmap.php')
+        || strstr($file->getPath(), 'template_classmap.php')
+        ) {
+            return false;
+        }
         return true;
     });
 $config = Symfony\CS\Config\Config::create();
