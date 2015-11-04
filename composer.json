@@ -11,22 +11,24 @@
     "doctrine/orm": "*",
     "doctrine/migrations": "*",
     "doctrine/doctrine-orm-module" : "*",
-    "zendframework/zendframework": "^2.5"
+    "zendframework/zendframework": "^2.5",
+    "widmogrod/zf2-assetic-module": "1.*"
   },
   "require-dev": {
     "zendframework/zftool": "*",
     "zendframework/zend-developer-tools": "dev-master",
     "fabpot/php-cs-fixer" : "*"
-
   },
   "scripts": {
     "post-install-cmd": [
       "mkdir -p data/cache; chmod -R 777 data/cache",
-      "mkdir -p data/logs;  chmod -R 777 data/logs"
+      "mkdir -p data/logs;  chmod -R 777 data/logs",
+      "mkdir -p public/assets;  chmod -R 777 public/assets"
     ],
     "post-update-cmd" : [
       "chmod -R 777 data/cache",
       "chmod -R 777 data/logs",
+      "chmod -R 777 public/assets",
       "sh bin/classmap_gen.sh",
       "sh bin/templatemap_gen.sh"
     ]
