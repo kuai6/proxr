@@ -13,3 +13,4 @@ vendor
 composer.phar
 composer.lock
 data
+public/assets/*
