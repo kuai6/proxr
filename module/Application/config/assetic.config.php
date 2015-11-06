@@ -5,12 +5,12 @@ namespace Application;
 return [
     'assetic_configuration' => [
 
-        'default' => array(
-            'assets' => array(
+        'default' => [
+            'assets' => [
                 '@head_common_js',
                 '@head_common_css',
-            ),
-        ),
+            ],
+        ],
 
 //        'routes' => array(
 //            'home' => array(
@@ -45,25 +45,25 @@ return [
                             'js/bootstrap.min.js',
                         ],
                     ],
-                    'common_images' => array(
-                        'assets' => array(
+                    'common_images' => [
+                        'assets' => [
                             'images/*',
                             'images/gallery/*',
                             'images/landing/*',
 
-                        ),
-                        'options' => array(
+                        ],
+                        'options' => [
                             'move_raw' => true,
-                        )
-                    ),
-                    'common_fonts' => array(
-                        'assets' => array(
+                        ]
+                    ],
+                    'common_fonts' => [
+                        'assets' => [
                             'fonts/*',
-                        ),
-                        'options' => array(
+                        ],
+                        'options' => [
                             'move_raw' => true,
-                        )
-                    ),
+                        ]
+                    ],
                 ],
             ],
         ],

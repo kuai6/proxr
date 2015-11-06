@@ -7,6 +7,7 @@
         ->appendName('viewport', 'width=device-width, initial-scale=1.0')
         ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
     ?>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic' rel='stylesheet' type='text/css'>
     <?php echo $this->headLink(); ?>
     <?php echo $this->headScript(); ?>
 </head>
@@ -26,15 +27,15 @@
     </nav>
 
 
-    <div id="page-wrapper" class="gray-bg dashbard-1" style="min-height: 962px;">
+    <div id="page-wrapper" class="gray-bg">
         <div class="row border-bottom">
             <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
                 <div class="navbar-header">Bottom navbar</div>
             </nav>
         </div>
-        <div class="row  border-bottom white-bg dashboard-header">
-            <div class="col-sm-3">
-                <div class="container"><?php echo $this->content; ?></div>
+        <div class="wrapper wrapper-content">
+            <div class="row">
+                <?php echo $this->content; ?>
             </div>
         </div>
     </div>
