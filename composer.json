@@ -8,6 +8,7 @@
     "ext-pcntl": "*",
     "ext-posix" : "*",
     "ext-shmop" : "*",
+    "ext-sockets": "*",
     "kuai6/queue": "dev-master",
     "doctrine/orm": "*",
     "doctrine/migrations": "*",
