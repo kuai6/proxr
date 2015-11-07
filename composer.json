@@ -7,6 +7,7 @@
     "php": ">=5.5",
     "ext-pcntl": "*",
     "ext-posix" : "*",
+    "ext-shmop" : "*",
     "kuai6/queue": "dev-master",
     "doctrine/orm": "*",
     "doctrine/migrations": "*",
