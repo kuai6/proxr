@@ -19,9 +19,10 @@ class ContactClosureTest extends \PHPUnit_Framework_TestCase
         $i = 0;
         $start = microtime(true);
 
+        $config = include __DIR__ .'/../../config/device.config.php';
         $command = new ContactClosure();
         $command->setAdapter(new \Application\Command\Adapter\Socket());
-        $command->getAdapter()->connect('127.0.0.1', 12101);
+        $command->getAdapter()->connect($config['host'], $config['port']);
 
         while ($i < 100) {
             $statuses = $command->getAllStatuses();
