@@ -24,13 +24,15 @@ class ContactClosureTest extends \PHPUnit_Framework_TestCase
         $command->setAdapter(new \Application\Command\Adapter\Socket());
         $command->getAdapter()->connect($config['host'], $config['port']);
 
-        while ($i < 100) {
+        $cnt = isset($config['count']) ? $config['count'] : 1000;
+        while ($i < $cnt) {
             $statuses = $command->getAllStatuses();
             $i ++;
         }
         $command->getAdapter()->close();
 
         $delta = microtime(true) - $start;
-        print_r($delta/1000);
+        print_r(sprintf("Total time: %f8.2\n", $delta));
+        print_r(sprintf("Requests per sec: %f8.2\n", $cnt/$delta));
     }
 }
