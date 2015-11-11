@@ -32,7 +32,7 @@ class ContactClosureTest extends \PHPUnit_Framework_TestCase
         $command->getAdapter()->close();
 
         $delta = microtime(true) - $start;
-        print_r(sprintf("Total time: %f8.2\n", $delta));
-        print_r(sprintf("Requests per sec: %f8.2\n", $cnt/$delta));
+        print_r(sprintf("Total time: %f8\n", $delta));
+        print_r(sprintf("Requests per sec: %f8\n", $cnt/$delta));
     }
 }
