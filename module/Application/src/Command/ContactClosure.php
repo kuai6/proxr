@@ -13,7 +13,7 @@ class ContactClosure extends AbstractCommand
      */
     public function getAllStatuses()
     {
-        $this->sequence = [self::CONTROL_COMMAND, 175, 0, 3];
+        $this->sequence = [self::CONTROL_COMMAND, 175, 0, 7];
         $packFormat = str_repeat('C', count($this->sequence));
         $request = call_user_func_array('pack', array_merge([$packFormat], $this->sequence));
         $this->getAdapter()->write($request);
