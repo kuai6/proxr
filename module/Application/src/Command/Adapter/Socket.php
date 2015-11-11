@@ -2,8 +2,6 @@
 
 namespace Application\Command\Adapter;
 
-use Application\Command\Adapter\Exception;
-
 /**
  * Class Socket
  * @package Application\Command\Adapter
@@ -34,11 +32,11 @@ class Socket implements AdapterInterface
     public function connect($ip, $port)
     {
         $this->resource = @socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-        if($this->resource === false){
+        if ($this->resource === false) {
             throw new Exception\RuntimeException('Unable to create socket');
         }
         $result = @socket_connect($this->resource, $ip, $port);
-        if($result === false){
+        if ($result === false) {
             throw new Exception\RuntimeException('Unable to connect socket');
         }
         @socket_set_timeout($this->resource, 1);
@@ -53,7 +51,7 @@ class Socket implements AdapterInterface
      */
     public function write($body)
     {
-        if(@socket_write($this->resource, $body) === false){
+        if (@socket_write($this->resource, $body) === false) {
             throw new Exception\RuntimeException('Unable to write socket');
         }
         return true;
@@ -67,7 +65,7 @@ class Socket implements AdapterInterface
     public function read()
     {
         $result = @socket_read($this->resource, 2048);
-        if($result === false){
+        if ($result === false) {
             throw new Exception\RuntimeException('Unable to read from socket');
         }
         return $result;

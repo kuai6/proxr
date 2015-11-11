@@ -21,7 +21,16 @@ return [
                             'action' => 'daemon',
                         ],
                     ],
-                ]
+                ],
+                'contact closure daemon' => [
+                    'options' => [
+                        'route' => 'contactClosureDeviceDaemon',
+                        'defaults' => [
+                            'controller' => 'Application\Controller\Console',
+                            'action' => 'contactClosureDeviceDaemon',
+                        ],
+                    ],
+                ],
             ],
         ],
     ],
