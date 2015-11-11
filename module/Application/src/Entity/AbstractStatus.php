@@ -16,11 +16,12 @@ use Doctrine\ORM\Mapping as ORM;
 class AbstractStatus
 {
     /**
-     * Statis Id
+     * Status Id
      * @var integer
      *
      * @ORM\Id()
-     * @ORM\Column(name="id")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\Column(name="id", type="integer")
      */
     protected $id;
 

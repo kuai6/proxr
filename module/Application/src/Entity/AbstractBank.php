@@ -6,17 +6,17 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
- * @ORM\Table(name="device")
+ * @ORM\Table(name="bank")
  * @ORM\DiscriminatorColumn(name="type")
  * @ORM\InheritanceType(value="SINGLE_TABLE")
  *
- * Class AbstractDevice
+ * Class AbstractBank
  * @package Application\Entity
  */
-class AbstractDevice
+class AbstractBank
 {
     /**
-     * Device Id
+     * Bank Id
      * @var integer
      *
      * @ORM\Id()
