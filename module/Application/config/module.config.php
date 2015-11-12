@@ -4,9 +4,10 @@ namespace Application;
 
 use Application\Controller\ConsoleController;
 use Application\Controller\IndexController;
-use Application\Daemon\DeviceDaemon;
+use Application\Daemon\ContactClosureDaemon;
 use Application\Daemon\MainDaemon;
 use Application\Daemon\TestDaemon;
+use Application\Service\ContactClosure as ContactClosureService;
 
 return array_merge(
     include 'console.config.php',
@@ -65,10 +66,14 @@ return array_merge(
             'translator' => 'Zend\Mvc\Service\TranslatorServiceFactory',
         ],
         'invokables' => [
+            /** Daemons */
             TestDaemon::class => TestDaemon::class,
-            DeviceDaemon::class => DeviceDaemon::class,
+            ContactClosureDaemon::class => ContactClosureDaemon::class,
             MainDaemon::class => MainDaemon::class,
-        ]
+
+            /** Services */
+            ContactClosureService::class => ContactClosureService::class
+        ],
     ],
     'translator' => [
         'locale' => 'en_US',

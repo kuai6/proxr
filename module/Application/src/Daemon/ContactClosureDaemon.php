@@ -5,20 +5,28 @@ namespace Application\Daemon;
 use Application\Command\AbstractCommand;
 use Application\Command\Adapter\Socket;
 use Application\Command\ContactClosure;
+use Application\Entity\Bank;
+use Application\Entity\Device;
+use Kuai6\Queue\Exchange;
+use Kuai6\Queue\Message;
+use Kuai6\Queue\Server;
+use Kuai6\Queue\ServerFactory;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
+use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
 /**
  * Демон для платы. запускается и настраевается системой
  *
- * Class DeviceDaemon
+ * Class ContactClosureDaemon
  * @package Application\Daemon
  */
-class DeviceDaemon extends AbstractLoopDaemon implements EventManagerAwareInterface
+class ContactClosureDaemon extends AbstractLoopDaemon implements EventManagerAwareInterface, ServiceLocatorAwareInterface
 {
-    use EventManagerAwareTrait;
+    use EventManagerAwareTrait, ServiceLocatorAwareTrait;
 
-    protected $processTitle = 'DeviceDaemon-01';
+    protected $processTitle = 'ContactClosureDaemon-01';
 
     /**
      * Максимальное время бездействия процесса ребенка (мсек.)
@@ -41,7 +49,10 @@ class DeviceDaemon extends AbstractLoopDaemon implements EventManagerAwareInterf
     /** @var  string */
     protected $commandAction;
 
+    /** @var  Device */
     protected $device;
+
+    protected static $statuses = [];
 
     public function init()
     {
@@ -52,14 +63,50 @@ class DeviceDaemon extends AbstractLoopDaemon implements EventManagerAwareInterf
      */
     public function cycle()
     {
+        /** @var Server $server */
+        $server = $this->getServiceLocator()->get(ServerFactory::class);
+        $exchange = new Exchange('contact.closure');
+        $server->declareExchange($exchange);
+
         $command = new ContactClosure();
         $command->setAdapter(new Socket());
         $command->getAdapter()->connect($this->getDevice()->getIp(), $this->getDevice()->getPort());
         $this->setCommand($command);
         $this->setCommandAction('getAllStatuses');
+
+        /** @var Bank $bank */
+        foreach ($this->getDevice()->getBanks() as $bank) {
+            static::$statuses[$bank->getName()] = $bank->getByte();
+        }
+
         while (true) {
             try {
-                $this->getCommand()->{$this->getCommandAction()}();
+                $changes = [];
+                $result = $this->getCommand()->{$this->getCommandAction()}();
+                foreach ($result as $bankName => $byte) {
+                    foreach ($byte as $bit => $value) {
+                        if (static::$statuses[$bankName][$bit] != $value) {
+                            //set cache
+                            static::$statuses[$bankName] = $byte;
+                            //set changes
+                            $changes[$bankName] = $byte;
+                        }
+                    }
+                }
+                if (count($changes) > 0) {
+                    //send message to queue
+                    $message = new Message([
+                        'device' => [
+                            'id' => $this->getDevice()->getId(),
+                            'banks' => $changes
+                        ]
+                    ]);
+                    try {
+                        $server->send($message, null);
+                    } catch (\Exception $e) {
+                        $this->err("Queue send message failed: %s. Message: %s", get_class($e), $e->getMessage());
+                    }
+                }
             } catch (\Exception $e) {
                 $this->err("Exception: %s Message: %s", get_class($e), $e->getMessage());
                 throw $e;
@@ -77,7 +124,7 @@ class DeviceDaemon extends AbstractLoopDaemon implements EventManagerAwareInterf
 
     /**
      * @param AbstractCommand $command
-     * @return DeviceDaemon
+     * @return ContactClosureDaemon
      */
     public function setCommand($command)
     {
@@ -95,7 +142,7 @@ class DeviceDaemon extends AbstractLoopDaemon implements EventManagerAwareInterf
 
     /**
      * @param string $commandAction
-     * @return DeviceDaemon
+     * @return ContactClosureDaemon
      */
     public function setCommandAction($commandAction)
     {
@@ -127,7 +174,7 @@ class DeviceDaemon extends AbstractLoopDaemon implements EventManagerAwareInterf
     }
 
     /**
-     * @return mixed
+     * @return Device
      */
     public function getDevice()
     {
@@ -135,8 +182,8 @@ class DeviceDaemon extends AbstractLoopDaemon implements EventManagerAwareInterf
     }
 
     /**
-     * @param mixed $device
-     * @return DeviceDaemon
+     * @param Device $device
+     * @return ContactClosureDaemon
      */
     public function setDevice($device)
     {

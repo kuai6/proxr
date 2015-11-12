@@ -1,8 +1,9 @@
 <?php
 namespace Application\Controller;
 
-use Application\Daemon\DeviceDaemon;
+use Application\Daemon\ContactClosureDaemon;
 use Application\Daemon\MainDaemon;
+use Application\Daemon\TestDaemon;
 use Application\Entity\Device;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\MvcEvent;
@@ -38,7 +39,7 @@ class ConsoleController extends AbstractActionController
                 'class' => MainDaemon::class
             ],
             'device' => [
-                'class' => DeviceDaemon::class,
+                'class' => ContactClosureDaemon::class,
             ],
         ];
 
@@ -56,8 +57,8 @@ class ConsoleController extends AbstractActionController
      */
     public function testAction()
     {
-        /** @var DeviceDaemon $daemon */
-        $daemon = $this->getServiceLocator()->get('Application\Daemon\DeviceDaemon');
+        /** @var TestDaemon $daemon */
+        $daemon = $this->getServiceLocator()->get(TestDaemon::class);
         /** @var ConsoleRequest $request */
         $request = $this->getRequest();
         $options = $request->getParams()->toArray();
@@ -87,8 +88,8 @@ class ConsoleController extends AbstractActionController
         $entityManager = $this->getServiceLocator()->get('doctrine.entity_manager.orm_default');
         /** @var Device $device */
         $device = $entityManager->getRepository(Device::class)->findOneBy(['id' => 1]);
-        /** @var DeviceDaemon $daemon */
-        $daemon = $this->getServiceLocator()->get('Application\Daemon\DeviceDaemon');
+        /** @var ContactClosureDaemon $daemon */
+        $daemon = $this->getServiceLocator()->get(ContactClosureDaemon::class);
         $daemon->setDevice($device);
         $daemon->setLogPath('./data/logs/contactClosure');
         $daemon->setProcessPath('./data/logs/contactClosure');

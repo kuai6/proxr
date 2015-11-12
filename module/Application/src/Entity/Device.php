@@ -57,6 +57,60 @@ class Device extends AbstractDevice
     /**
      * @return string
      */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     * @return Device
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @return DeviceStatus
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param DeviceStatus $status
+     * @return Device
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getBanks()
+    {
+        return $this->banks;
+    }
+
+    /**
+     * @param ArrayCollection $banks
+     * @return Device
+     */
+    public function setBanks($banks)
+    {
+        $this->banks = $banks;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
     public function getPort()
     {
         return $this->port;
