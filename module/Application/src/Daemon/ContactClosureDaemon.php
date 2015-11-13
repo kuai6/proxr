@@ -67,7 +67,7 @@ class ContactClosureDaemon extends AbstractLoopDaemon implements EventManagerAwa
         $server = $this->getServiceLocator()->get(ServerFactory::class);
         $exchange = new Exchange('contact.closure');
         $server->declareExchange($exchange);
-        $queue = new Queue('contact.closure.', $this->getProcessTitle());
+        $queue = new Queue('contact.closure.'. $this->getProcessTitle());
         $server->queueBind($queue, $exchange);
 
         $command = new ContactClosure();
