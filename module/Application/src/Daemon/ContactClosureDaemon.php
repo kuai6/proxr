@@ -65,11 +65,8 @@ class ContactClosureDaemon extends AbstractLoopDaemon implements EventManagerAwa
     {
         /** @var Server $server */
         $server = $this->getServiceLocator()->get(ServerFactory::class);
-        $exchange = new Exchange('contact.closure');
+        $exchange = new Exchange('contact.closure', 'topic');
         $server->declareExchange($exchange);
-        $queue = new Queue('contact.closure.'. $this->getProcessTitle());
-        $server->declareQueue($queue, $exchange);
-        $server->queueBind($queue, $exchange);
 
         $command = new ContactClosure();
         $command->setAdapter(new Socket());
@@ -100,7 +97,7 @@ class ContactClosureDaemon extends AbstractLoopDaemon implements EventManagerAwa
                         ]
                     ]);
                     try {
-                        $server->send($message, $exchange);
+                        $server->send($message, $exchange, 'app.daemon.contact.closure.sensors.event');
                     } catch (\Exception $e) {
                         $this->err("Queue send message failed: %s. Message: %s", get_class($e), $e->getMessage());
                     }
