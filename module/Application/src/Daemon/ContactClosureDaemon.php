@@ -5,7 +5,6 @@ namespace Application\Daemon;
 use Application\Command\AbstractCommand;
 use Application\Command\Adapter\Socket;
 use Application\Command\ContactClosure;
-use Application\Entity\Bank;
 use Application\Entity\Device;
 use Kuai6\Queue\Exchange;
 use Kuai6\Queue\Message;
@@ -52,7 +51,7 @@ class ContactClosureDaemon extends AbstractLoopDaemon implements EventManagerAwa
     /** @var  Device */
     protected $device;
 
-    protected static $statuses = [];
+    protected $statuses = [];
 
     public function init()
     {
@@ -74,20 +73,15 @@ class ContactClosureDaemon extends AbstractLoopDaemon implements EventManagerAwa
         $this->setCommand($command);
         $this->setCommandAction('getAllStatuses');
 
-        /** @var Bank $bank */
-        foreach ($this->getDevice()->getBanks() as $bank) {
-            static::$statuses[$bank->getName()] = $bank->getByte();
-        }
-
         while (true) {
             try {
                 $changes = [];
                 $result = $this->getCommand()->{$this->getCommandAction()}();
                 foreach ($result as $bankName => $byte) {
                     foreach ($byte as $bit => $value) {
-                        if (static::$statuses[$bankName][$bit] != $value) {
+                        if ($this->statuses[$bankName][$bit] != $value) {
                             //set cache
-                            static::$statuses[$bankName] = $byte;
+                            $this->statuses[$bankName] = $byte;
                             //set changes
                             $changes[$bankName] = $byte;
                         }
@@ -188,6 +182,24 @@ class ContactClosureDaemon extends AbstractLoopDaemon implements EventManagerAwa
     public function setDevice($device)
     {
         $this->device = $device;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getStatuses()
+    {
+        return $this->statuses;
+    }
+
+    /**
+     * @param array $statuses
+     * @return ContactClosureDaemon
+     */
+    public function setStatuses($statuses)
+    {
+        $this->statuses = $statuses;
         return $this;
     }
 }

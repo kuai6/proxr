@@ -4,6 +4,7 @@ namespace Application\Controller;
 use Application\Daemon\ContactClosureDaemon;
 use Application\Daemon\MainDaemon;
 use Application\Daemon\TestDaemon;
+use Application\Entity\Bank;
 use Application\Entity\Device;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\MvcEvent;
@@ -94,6 +95,14 @@ class ConsoleController extends AbstractActionController
         $daemon->setLogPath('./data/logs/contactClosure');
         $daemon->setProcessPath('./data/logs/contactClosure');
         $daemon->setProcessTitle('contactClosureDevice');
+
+        $statuses = [];
+        /** @var Bank $bank */
+        foreach ($device->getBanks() as $bank) {
+            $statuses[$bank->getName()] = $bank->getByte();
+        }
+        $daemon->setStatuses($statuses);
+
         $daemon->start();
     }
 }
