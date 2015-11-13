@@ -96,7 +96,7 @@ class ContactClosureDaemon extends AbstractLoopDaemon implements EventManagerAwa
                         ]
                     ]);
                     try {
-                        $server->send($message, null);
+                        $server->send($message, $exchange);
                     } catch (\Exception $e) {
                         $this->err("Queue send message failed: %s. Message: %s", get_class($e), $e->getMessage());
                     }
