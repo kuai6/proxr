@@ -8,6 +8,7 @@ use Application\Command\ContactClosure;
 use Application\Entity\Device;
 use Kuai6\Queue\Exchange;
 use Kuai6\Queue\Message;
+use Kuai6\Queue\Queue;
 use Kuai6\Queue\Server;
 use Kuai6\Queue\ServerFactory;
 use Zend\EventManager\EventManagerAwareInterface;
@@ -66,6 +67,8 @@ class ContactClosureDaemon extends AbstractLoopDaemon implements EventManagerAwa
         $server = $this->getServiceLocator()->get(ServerFactory::class);
         $exchange = new Exchange('contact.closure');
         $server->declareExchange($exchange);
+        $queue = new Queue('contact.closure.', $this->getProcessTitle());
+        $server->queueBind($queue, $exchange);
 
         $command = new ContactClosure();
         $command->setAdapter(new Socket());
