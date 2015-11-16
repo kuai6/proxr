@@ -54,6 +54,7 @@ class Module
             'Test Daemon',
             /** import */
             'test (start|stop|restart):command [--logPath=] [--processPath=] [--childNumber=]' => 'Dummy Test Daemon',
+            'system init' => 'Init system'
         ];
     }
 }

@@ -20,22 +20,23 @@ prefix="/srv/www/$installationName"
 
 case "$1" in
     start)
+        $php $prefix/public/index.php system init
         echo -n "Starting Main Daemon"
         $php $prefix/public/index.php daemon main $1
         echo_success
         echo;
         echo -n "Starting Device Daemon"
-        $php $prefix/public/index.php daemon device $1
+        $php $prefix/public/index.php contactClosureDeviceDaemon
         echo_success
         echo;
     ;;
     stop)
-        echo -n "Stopping Main Daemon"
-        $php $prefix/public/index.php daemon main $1
+        echo -n "Stopping Device Daemon"
+        $php $prefix/public/index.php daemon contactClosureDevice $1
         echo_success
         echo;
-        echo -n "Stopping Device Daemon"
-        $php $prefix/public/index.php daemon device $1
+        echo -n "Stopping Main Daemon"
+        $php $prefix/public/index.php daemon main $1
         echo_success
         echo;
     ;;

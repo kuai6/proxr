@@ -8,6 +8,8 @@ use Application\Daemon\ContactClosureDaemon;
 use Application\Daemon\MainDaemon;
 use Application\Daemon\TestDaemon;
 use Application\Service\ContactClosure as ContactClosureService;
+use Application\Service\Daemon as DaemonService;
+use Application\Service\Queue as QueueService;
 
 return array_merge(
     include 'console.config.php',
@@ -72,8 +74,13 @@ return array_merge(
             MainDaemon::class => MainDaemon::class,
 
             /** Services */
-            ContactClosureService::class => ContactClosureService::class
+            ContactClosureService::class => ContactClosureService::class,
+            DaemonService::class => DaemonService::class,
+            QueueService::class => QueueService::class,
         ],
+        'aliases' =>[
+            'ApplicationEntityManager' => 'doctrine.entity_manager.orm_default'
+        ]
     ],
     'translator' => [
         'locale' => 'en_US',

@@ -3,18 +3,14 @@ declare (ticks = 1);
 namespace Application\Daemon;
 
 use Application\Command\AbstractCommand;
-use Application\Command\Adapter\Socket;
-use Application\Command\ContactClosure;
 use Application\Entity\Device;
+use Application\Service\Daemon;
+use Application\ServiceManager\ServiceManagerAwareTrait;
 use Kuai6\Queue\Exchange;
 use Kuai6\Queue\Message;
-use Kuai6\Queue\Queue;
 use Kuai6\Queue\Server;
 use Kuai6\Queue\ServerFactory;
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerAwareTrait;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
+use Zend\ServiceManager\ServiceManagerAwareInterface;
 
 /**
  * Демон для платы. запускается и настраевается системой
@@ -22,11 +18,11 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
  * Class ContactClosureDaemon
  * @package Application\Daemon
  */
-class ContactClosureDaemon extends AbstractLoopDaemon implements EventManagerAwareInterface, ServiceLocatorAwareInterface
+class ContactClosureDaemon extends AbstractLoopDaemon implements ServiceManagerAwareInterface
 {
-    use EventManagerAwareTrait, ServiceLocatorAwareTrait;
+    use ServiceManagerAwareTrait;
 
-    protected $processTitle = 'ContactClosureDaemon-01';
+    protected $processTitle = 'contactClosureDevice';
 
     /**
      * Максимальное время бездействия процесса ребенка (мсек.)
@@ -37,11 +33,11 @@ class ContactClosureDaemon extends AbstractLoopDaemon implements EventManagerAwa
     /**
      * @var string
      */
-    protected $logPath = './data/logs/device';
+    protected $logPath = './data/logs/contactClosure';
     /**
      * @var string
      */
-    protected $processPath  = './data/logs/device';
+    protected $processPath  = './data/logs/contactClosure';
 
     /** @var  AbstractCommand */
     protected $command;
@@ -52,10 +48,38 @@ class ContactClosureDaemon extends AbstractLoopDaemon implements EventManagerAwa
     /** @var  Device */
     protected $device;
 
-    protected $statuses = [];
+    /** @var  Server */
+    protected $queueServer;
 
+    /** @var  Message */
+    protected $queueMessage;
+
+    /** @var  string */
+    protected $queueMessageRoutingKey;
+
+    /** @var  Exchange */
+    protected $queueExchange;
+
+    /** @var array  */
+    public $statuses = [];
+
+    /**
+     * @throws \Exception
+     */
     public function init()
     {
+        try {
+            /** @var Server $queueServer */
+            $queueServer = $this->getServiceManager()->get(ServerFactory::class);
+            $this->setQueueServer($queueServer);
+            $this->setQueueMessageRoutingKey(sprintf('app.daemon.%s.event',
+                $this->getDevice()->getName()
+            ));
+            $this->setQueueMessage(new Message());
+        } catch (\Exception $e) {
+            $this->log('%s %s', get_class($e), print_r($e->getTraceAsString(), true));
+            throw $e;
+        }
     }
 
     /**
@@ -63,45 +87,9 @@ class ContactClosureDaemon extends AbstractLoopDaemon implements EventManagerAwa
      */
     public function cycle()
     {
-        /** @var Server $server */
-        $server = $this->getServiceLocator()->get(ServerFactory::class);
-        $exchange = new Exchange('contact.closure', 'topic');
-        $server->declareExchange($exchange);
-
-        $command = new ContactClosure();
-        $command->setAdapter(new Socket());
-        $command->getAdapter()->connect($this->getDevice()->getIp(), $this->getDevice()->getPort());
-        $this->setCommand($command);
-        $this->setCommandAction('getAllStatuses');
-
         while (true) {
             try {
-                $changes = [];
-                $result = $this->getCommand()->{$this->getCommandAction()}();
-                foreach ($result as $bankName => $byte) {
-                    foreach ($byte as $bit => $value) {
-                        if ($this->statuses[$bankName][$bit] != $value) {
-                            //set cache
-                            $this->statuses[$bankName] = $byte;
-                            //set changes
-                            $changes[$bankName] = $byte;
-                        }
-                    }
-                }
-                if (count($changes) > 0) {
-                    //send message to queue
-                    $message = new Message([
-                        'device' => [
-                            'id' => $this->getDevice()->getId(),
-                            'banks' => $changes
-                        ]
-                    ]);
-                    try {
-                        $server->send($message, $exchange, 'app.daemon.contact.closure.sensors.event');
-                    } catch (\Exception $e) {
-                        $this->err("Queue send message failed: %s. Message: %s", get_class($e), $e->getMessage());
-                    }
-                }
+                $this->getServiceManager()->get(Daemon::class)->contactClosureDaemonCycle($this);
             } catch (\Exception $e) {
                 $this->err("Exception: %s Message: %s", get_class($e), $e->getMessage());
                 throw $e;
@@ -201,6 +189,78 @@ class ContactClosureDaemon extends AbstractLoopDaemon implements EventManagerAwa
     public function setStatuses($statuses)
     {
         $this->statuses = $statuses;
+        return $this;
+    }
+
+    /**
+     * @return Message
+     */
+    public function getQueueMessage()
+    {
+        return $this->queueMessage;
+    }
+
+    /**
+     * @param Message $queueMessage
+     * @return ContactClosureDaemon
+     */
+    public function setQueueMessage($queueMessage)
+    {
+        $this->queueMessage = $queueMessage;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getQueueMessageRoutingKey()
+    {
+        return $this->queueMessageRoutingKey;
+    }
+
+    /**
+     * @param mixed $queueMessageRoutingKey
+     * @return ContactClosureDaemon
+     */
+    public function setQueueMessageRoutingKey($queueMessageRoutingKey)
+    {
+        $this->queueMessageRoutingKey = $queueMessageRoutingKey;
+        return $this;
+    }
+
+    /**
+     * @return Server
+     */
+    public function getQueueServer()
+    {
+        return $this->queueServer;
+    }
+
+    /**
+     * @param Server $queueServer
+     * @return ContactClosureDaemon
+     */
+    public function setQueueServer($queueServer)
+    {
+        $this->queueServer = $queueServer;
+        return $this;
+    }
+
+    /**
+     * @return Exchange
+     */
+    public function getQueueExchange()
+    {
+        return $this->queueExchange;
+    }
+
+    /**
+     * @param Exchange $queueExchange
+     * @return ContactClosureDaemon
+     */
+    public function setQueueExchange($queueExchange)
+    {
+        $this->queueExchange = $queueExchange;
         return $this;
     }
 }

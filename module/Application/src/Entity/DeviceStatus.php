@@ -12,4 +12,5 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class DeviceStatus extends AbstractStatus
 {
+    const STATUS_ACTIVE = 'device.active';
 }

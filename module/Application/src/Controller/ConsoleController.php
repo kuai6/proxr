@@ -1,11 +1,14 @@
 <?php
 namespace Application\Controller;
 
+use Application\Command\Adapter\Socket;
+use Application\Command\ContactClosure;
 use Application\Daemon\ContactClosureDaemon;
 use Application\Daemon\MainDaemon;
 use Application\Daemon\TestDaemon;
 use Application\Entity\Bank;
 use Application\Entity\Device;
+use Application\Service\Queue;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\MvcEvent;
 use Zend\Console\Request as ConsoleRequest;
@@ -39,7 +42,7 @@ class ConsoleController extends AbstractActionController
             'main' => [
                 'class' => MainDaemon::class
             ],
-            'device' => [
+            'contactClosureDevice' => [
                 'class' => ContactClosureDaemon::class,
             ],
         ];
@@ -92,9 +95,11 @@ class ConsoleController extends AbstractActionController
         /** @var ContactClosureDaemon $daemon */
         $daemon = $this->getServiceLocator()->get(ContactClosureDaemon::class);
         $daemon->setDevice($device);
-        $daemon->setLogPath('./data/logs/contactClosure');
-        $daemon->setProcessPath('./data/logs/contactClosure');
-        $daemon->setProcessTitle('contactClosureDevice');
+        $command = new ContactClosure();
+        $command->setAdapter(new Socket());
+        $command->getAdapter()->connect($device->getIp(), $device->getPort());
+        $daemon->setCommand($command);
+        $daemon->setCommandAction('getAllStatuses');
 
         $statuses = [];
         /** @var Bank $bank */
@@ -102,7 +107,24 @@ class ConsoleController extends AbstractActionController
             $statuses[$bank->getName()] = $bank->getByte();
         }
         $daemon->setStatuses($statuses);
-
         $daemon->start();
+    }
+
+    /**
+     * Инициализация всего окружения
+     */
+    public function systemInitAction()
+    {
+        $config = $this->getServiceLocator()->get('config');
+        if (array_key_exists('queue', $config)) {
+            /** @var Queue $queueService */
+            $queueService = $this->getServiceLocator()->get(Queue::class);
+            if (array_key_exists('exchanges', $config['queue'])) {
+                $queueService->initExchanges($config['queue']['exchanges']);
+            }
+            if (array_key_exists('queues', $config['queue'])) {
+                $queueService->initQueues($config['queue']['queues']);
+            }
+        }
     }
 }

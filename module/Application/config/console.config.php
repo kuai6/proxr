@@ -31,6 +31,15 @@ return [
                         ],
                     ],
                 ],
+                'system-init' => [
+                    'options' => [
+                        'route' => 'system (init):command',
+                        'defaults' => [
+                            'controller' => 'Application\Controller\Console',
+                            'action' => 'systemInit',
+                        ],
+                    ],
+                ],
             ],
         ],
     ],
