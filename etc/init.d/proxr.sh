@@ -4,20 +4,9 @@ uid="kuai6";
 php=/usr/bin/php
 installationName="proxr"
 CONSOLETYPE="normal"
-
-if [[ $USER != $uid ]]; then
-    if [[ $EUID -ne 0 ]]; then
-        echo "This script must be run as $uid"
-    exit 1
-    else
-        sudo -u $uid -s "$0 $1 $2 $3";
-        exit 0;
-    fi;
-fi;
-
-# This all seem confusing? Look in /etc/sysconfig/init,
-# or in /usr/share/doc/initscripts-*/sysconfig.txt
+BOOTUP="color"
 RES_COL=60
+
 MOVE_TO_COL="echo -en \\033[${RES_COL}G"
 SETCOLOR_SUCCESS="echo -en \\033[1;32m"
 SETCOLOR_FAILURE="echo -en \\033[1;31m"
