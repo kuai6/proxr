@@ -22,11 +22,11 @@ class ContactClosureTest extends \PHPUnit_Framework_TestCase
         $config = include __DIR__ .'/../../config/device.config.php';
         $command = new ContactClosure();
         $command->setAdapter(new \Application\Command\Adapter\Socket());
-        $command->getAdapter()->connect($config['host'], $config['port']);
+        $command->getAdapter()->connect($config['contactClosure']['host'], $config['contactClosure']['port']);
 
-        $cnt = isset($config['count']) ? $config['count'] : 1000;
+        $cnt = isset($config['count']) ? $config['count'] : 5;
         while ($i < $cnt) {
-            $statuses = $command->getAllStatuses();
+            $command->getAllStatuses();
             $i ++;
         }
         $command->getAdapter()->close();

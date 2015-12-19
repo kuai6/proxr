@@ -22,15 +22,6 @@ class Bank extends AbstractBank
     protected $device;
 
     /**
-     * Bank type
-     * @var \Application\Entity\BankType
-     *
-     * @ORM\Column(name="bankTypeId")
-     * @ORM\ManyToOne(targetEntity="\Application\Entity\BankType", fetch="LAZY")
-     */
-    protected $bankType;
-
-    /**
      * Bank name in device, e.q 1,2,3 etc
      * @var integer
      *
@@ -117,24 +108,6 @@ class Bank extends AbstractBank
     public function setDevice($device)
     {
         $this->device = $device;
-        return $this;
-    }
-
-    /**
-     * @return BankType
-     */
-    public function getBankType()
-    {
-        return $this->bankType;
-    }
-
-    /**
-     * @param BankType $bankType
-     * @return Bank
-     */
-    public function setBankType($bankType)
-    {
-        $this->bankType = $bankType;
         return $this;
     }
 

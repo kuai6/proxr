@@ -2,6 +2,7 @@
 
 namespace Application\EntityRepository;
 
+use Application\Entity\Device;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -33,5 +34,18 @@ class Bank extends EntityRepository
         $query->execute();
 
         return true;
+    }
+
+    /**
+     * @param Device $device
+     * @param $bankName
+     * @return null|\Application\Entity\Bank
+     */
+    public function getBankByDeviceAndName(Device $device, $bankName)
+    {
+        return $this->findOneBy([
+            'device' => $device,
+            'name' => $bankName
+        ]);
     }
 }

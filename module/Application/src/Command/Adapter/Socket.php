@@ -39,6 +39,8 @@ class Socket implements AdapterInterface
         if ($result === false) {
             throw new Exception\RuntimeException('Unable to connect socket');
         }
+        @socket_set_option($this->resource, SOL_SOCKET, SO_RCVTIMEO, ['sec' => 1, 'usec' => 0]);
+        @socket_set_option($this->resource, SOL_SOCKET, SO_SNDTIMEO, ['sec' => 1, 'usec' => 0]);
         @socket_set_timeout($this->resource, 1);
     }
 

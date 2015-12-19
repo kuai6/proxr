@@ -22,11 +22,11 @@ class Device extends AbstractDevice
     protected $name;
 
     /**
-     * DeviceStatus
-     * @var DeviceStatus
+     * Status
+     * @var Status\Device
      *
-     * @ORM\Column(name="statusId", type="integer")
-     * @ORM\ManyToOne(targetEntity="\Application\Entity\DeviceStatus", fetch="LAZY")
+     * @ORM\ManyToOne(targetEntity="\Application\Entity\Status\Device", fetch="LAZY")
+     * @ORM\JoinColumn(name="statusId", referencedColumnName="id", nullable=false)
      */
     protected $status;
 
@@ -73,7 +73,7 @@ class Device extends AbstractDevice
     }
 
     /**
-     * @return DeviceStatus
+     * @return Status\Device
      */
     public function getStatus()
     {
@@ -81,7 +81,7 @@ class Device extends AbstractDevice
     }
 
     /**
-     * @param DeviceStatus $status
+     * @param Status\Device $status
      * @return Device
      */
     public function setStatus($status)

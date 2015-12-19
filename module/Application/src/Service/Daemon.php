@@ -4,11 +4,14 @@ namespace Application\Service;
 
 use Application\Daemon\ContactClosureDaemon;
 use Application\Entity\Bank;
+use Application\Event\Event;
 use Doctrine\ORM\EntityManager;
 use Kuai6\Queue\Message;
 use Kuai6\Queue\Queue;
 use Kuai6\Queue\Server;
 use Kuai6\Queue\ServerFactory;
+use Zend\EventManager\EventManagerInterface;
+use Zend\Mvc\Application;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
@@ -40,12 +43,25 @@ class Daemon extends AbstractService implements ServiceLocatorAwareInterface
         try {
             /** @var EntityManager $entityManager */
             $entityManager = $this->getServiceLocator()->get('ApplicationEntityManager');
+            /** @var Application $application */
+            $application = $this->getServiceLocator()->get('Application');
+            /** @var EventManagerInterface $eventManager */
+            $eventManager = $application->getEventManager();
+
             $data = $message->getData();
             if (!array_key_exists('deviceId', $data) || !array_key_exists('deviceBanks', $data)) {
                 return false;
             }
             foreach ($data['deviceBanks'] as $bankName => $bankBits) {
-                $entityManager->getRepository(Bank::class)->saveBitsDBAL($data['deviceId'], $bankName, $bankBits);
+                /** @var \Application\EntityRepository\Bank $bankEntityRepository */
+                $bankEntityRepository = $entityManager->getRepository(Bank::class);
+                $bankEntityRepository->saveBitsDBAL($data['deviceId'], $bankName, $bankBits);
+                $event = new Event();
+                $event->setName(Event::EVENT_CONTACT_CLOSURE)
+                    ->setDevice($data['deviceId'])
+                    ->setBank($bankName)
+                    ->setBits($bankBits);
+                $eventManager->trigger(Event::EVENT_CONTACT_CLOSURE, $event);
             }
             $message->confirm();
         } catch (\Exception $e) {
@@ -68,7 +84,7 @@ class Daemon extends AbstractService implements ServiceLocatorAwareInterface
                     //set cache
                     $daemon->statuses[$bankName] = $byte;
                     //set changes
-                    $changes[$bankName] = $byte;
+                    $changes[$bankName][$bit] = $value;
                 }
             }
         }

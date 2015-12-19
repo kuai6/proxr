@@ -2,7 +2,7 @@
 
 namespace Application\EntityRepository;
 
-use Application\Entity\DeviceStatus;
+use Application\Entity\Status;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -16,9 +16,9 @@ class Device extends EntityRepository
         $query = $this->getEntityManager()->getConnection()->createQueryBuilder();
         $query->select('d.*')
             ->from($this->getClassMetadata()->getTableName(), 'd')
-            ->innerJoin('d', $this->getEntityManager()->getClassMetadata(DeviceStatus::class)->getTableName(), 'ds', 'd.statusId = ds.id')
+            ->innerJoin('d', $this->getEntityManager()->getClassMetadata(Status\Device::class)->getTableName(), 'ds', 'd.statusId = ds.id')
             ->where('ds.code = :code')
-            ->setParameter('code', DeviceStatus::STATUS_ACTIVE);
+            ->setParameter('code', Status\Device::STATUS_ACTIVE);
         return $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

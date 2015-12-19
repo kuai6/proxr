@@ -2,6 +2,10 @@
 return [
     // This should be an array of module namespaces used in the application.
     'modules' => [
+        'DoctrineModule',
+        'DoctrineORMModule',
+
+        'Kuai6\\Queue',
         'Application',
     ],
 
@@ -14,6 +18,9 @@ return [
         'module_paths' => [
             __DIR__ . '/../../../../module',
             __DIR__ . '/../../../../vendor',
+        ],
+        'config_glob_paths' => [
+            __DIR__ . '/../../../../config/autoload/{{,*.}global,{,*.}local}.php',
         ],
     ],
 ];

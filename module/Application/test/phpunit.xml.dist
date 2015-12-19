@@ -18,8 +18,11 @@
     </testsuites>
     <filter>
         <whitelist>
-            <directory>./ApplicationTest</directory>
+            <directory>./../src</directory>
         </whitelist>
+        <blacklist>
+            <directory>./../test</directory>
+        </blacklist>
     </filter>
     <logging>
         <log type="coverage-php" target=".reports/coverage/coverage-phpunit.cov"/>
