@@ -66,9 +66,11 @@ class Socket implements AdapterInterface
      */
     public function read()
     {
-        $result = @socket_read($this->resource, 2048);
+        $result = @socket_read($this->resource, 255);
         if ($result === false) {
-            throw new Exception\RuntimeException('Unable to read from socket');
+            $errorCode = @socket_last_error($this->resource);
+            $errorMessage = @socket_strerror($errorCode);
+            throw new Exception\RuntimeException(sprintf('Unable to read from socket [%s]:%s', $errorCode, $errorMessage));
         }
         return $result;
     }
