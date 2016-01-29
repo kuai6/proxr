@@ -1,6 +1,7 @@
 <?php
 
 namespace Application\Command;
+
 use Application\Command\Exception\RuntimeException;
 use Application\Entity\Bank;
 

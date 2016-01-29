@@ -46,7 +46,7 @@ class FromRepositoryTest extends AbstractHttpControllerTestCase
             '<assignFromRepository name="contextVariable" repository="Application\EntityRepository\SomeRepository" action="create" />' => new Device(),
         ];
 
-        foreach($testCase as $metadata => $expectedValue) {
+        foreach ($testCase as $metadata => $expectedValue) {
             /** @var FromRepository $assignFromRepository */
             $assignFromRepository = $activityManager->get('assignFromRepository');
             static::assertInstanceOf(FromRepository::class, $assignFromRepository);

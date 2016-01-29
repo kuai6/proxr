@@ -35,7 +35,7 @@ class Activity extends AbstractService implements ServiceLocatorAwareInterface
         /** @var ActivityManager $activityManager */
         $activityManager = $this->getServiceLocator()->get(ActivityManager::class);
 
-        foreach($activities as $activityData) {
+        foreach ($activities as $activityData) {
             /** @var \Application\Activity\Activity\Activity $activity */
             $activity = $activityManager->get('activity');
             /** @var string $metadata */

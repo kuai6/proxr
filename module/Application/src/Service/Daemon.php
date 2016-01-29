@@ -59,7 +59,7 @@ class Daemon extends AbstractService implements ServiceLocatorAwareInterface
                 $bankEntityRepository = $entityManager->getRepository(Bank::class);
                 //remove bit direction
                 $bankBitsWithoutDirection = [];
-                foreach($bankBits as $bit => $value){
+                foreach ($bankBits as $bit => $value) {
                     if (strpos($bit, '_direction', 0) !== false) {
                         continue;
                     }

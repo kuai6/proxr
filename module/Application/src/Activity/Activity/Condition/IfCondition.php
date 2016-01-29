@@ -115,7 +115,7 @@ class IfCondition extends Activity\Condition
         $contextArray = $context->getContext();
         if ($this->getConditionActivity()) {
             return $this->getConditionActivity()->execute($context);
-        } else if ($this->getVariable() || $this->getRawType()) {
+        } elseif ($this->getVariable() || $this->getRawType()) {
             if ($this->getIsExists() !== null) {
                 $answer = null !== $this->getRawType()
                     ? ('null' !== $this->getRawType())
@@ -134,13 +134,13 @@ class IfCondition extends Activity\Condition
                 || (!$this->getIsNull() && !$answer);
             }
 
-            if($this->getIsTrue() !== null) {
+            if ($this->getIsTrue() !== null) {
                 $this->setType('bool');
                 $this->setOperand('eq');
                 $this->setValue($this->getIsTrue());
             }
 
-            if($this->getInValue()){
+            if ($this->getInValue()) {
                 $value = $context->get($this->getInValue());
             } else {
                 $value = $this->getValue();
@@ -165,12 +165,12 @@ class IfCondition extends Activity\Condition
      */
     protected function filterByType($value, $type)
     {
-        switch($type) {
+        switch ($type) {
             case 'bool':
             case 'boolean':
                 $t = $value;
                 $value = true;
-                if($t === 'false') {
+                if ($t === 'false') {
                     $value = false;
                 }
                 break;
@@ -245,21 +245,20 @@ class IfCondition extends Activity\Condition
         if (isset($attributes['isExists'])) {
             $this->setIsExists('true' === (string)$attributes['isExists']);
         }
-        if(isset($attributes['isTrue'])) {
+        if (isset($attributes['isTrue'])) {
             $this->setIsTrue((string)$attributes['isTrue']);
         }
         if (isset($attributes['source'])) {
-
         }
         if (isset($attributes['operand']) && (isset($attributes['value']) || isset($attributes['inValue']))) {
             $this->setOperand((string)$attributes['operand']);
-            if(isset($attributes['value'])){
+            if (isset($attributes['value'])) {
                 $this->setValue((string)$attributes['value']);
             }
-            if(isset($attributes['inValue'])){
+            if (isset($attributes['inValue'])) {
                 $this->setInValue((string)$attributes['inValue']);
             }
-            if(isset($attributes['type'])) {
+            if (isset($attributes['type'])) {
                 $this->setType((string)$attributes['type']);
             }
         }
@@ -473,4 +472,4 @@ class IfCondition extends Activity\Condition
         $this->rawValue = $rawValue;
         return $this;
     }
-} 
+}

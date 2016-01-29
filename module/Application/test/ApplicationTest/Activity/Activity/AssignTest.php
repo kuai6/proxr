@@ -34,7 +34,7 @@ class AssignTest extends AbstractHttpControllerTestCase
             '<assign name="contextVariable" />' => null,
         ];
 
-        foreach($testCase as $metadata => $expectedValue) {
+        foreach ($testCase as $metadata => $expectedValue) {
             /** @var Assign $assign */
             $assign = $activityManager->get('assign');
             static::assertInstanceOf(Assign::class, $assign);

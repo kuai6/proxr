@@ -62,4 +62,4 @@ class Assign extends AbstractActivity implements ServiceLocatorAwareInterface
             $this->setValue((string)$attributes['value']);
         }
     }
-} 
+}

@@ -74,7 +74,7 @@ class Condition extends Callback implements ServiceLocatorAwareInterface
             }
             return (bool)$activity->execute($context);
         } else {
-            if($this->getActivity()) {
+            if ($this->getActivity()) {
                 $res = $this->getActivity()->execute($context);
             } else {
                 $res = parent::execute($context);

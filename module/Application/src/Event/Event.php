@@ -1,6 +1,7 @@
 <?php
 
 namespace Application\Event;
+
 use Application\Entity\EventLog;
 
 /**

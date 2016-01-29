@@ -21,7 +21,7 @@ class Log extends AbstractActivity
     public function execute(Context $context)
     {
         $logContent = Debug::dump($context, 2, true, false);
-        if($this->getName() !== null){
+        if ($this->getName() !== null) {
             $logContent = Debug::dump($context->get($this->getName()), 2, true, false);
         }
 

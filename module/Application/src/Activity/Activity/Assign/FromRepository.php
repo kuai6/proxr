@@ -97,7 +97,7 @@ class FromRepository extends AbstractActivity
         switch ($action) {
             case 'create':
                 $entityClassName = $repository->getClassName();
-                $entity = new $entityClassName(); ;
+                $entity = new $entityClassName();
                 break;
 
             default:
@@ -127,4 +127,4 @@ class FromRepository extends AbstractActivity
             $this->setAction((string)$attributes['action']);
         }
     }
-} 
+}

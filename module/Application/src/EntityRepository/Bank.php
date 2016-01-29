@@ -66,5 +66,4 @@ class Bank extends EntityRepository
             ->setParameter('name', $bankName);
         return $query->execute()->fetch(\PDO::FETCH_ASSOC);
     }
-
 }
