@@ -2,8 +2,10 @@
 declare (ticks = 1);
 namespace Application\Daemon;
 
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerAwareTrait;
+use Application\Service\Daemon;
+use Application\ServiceManager\ServiceManagerAwareTrait;
+use Zend\Mvc\Application;
+use Zend\ServiceManager\ServiceManagerAwareInterface;
 
 /**
  * Демон системы. Смотрит на очедередь. при получении какого-либо сообщания бросает соотвтевующее событие, которое ловится системой.
@@ -11,9 +13,9 @@ use Zend\EventManager\EventManagerAwareTrait;
  * Class MainDaemon
  * @package Application\Daemon
  */
-class MainDaemon extends AbstractLoopDaemon implements EventManagerAwareInterface
+class MainDaemon extends AbstractLoopDaemon implements  ServiceManagerAwareInterface
 {
-    use EventManagerAwareTrait;
+    use ServiceManagerAwareTrait;
 
     protected $processTitle = 'MainDaemon';
 
@@ -32,8 +34,17 @@ class MainDaemon extends AbstractLoopDaemon implements EventManagerAwareInterfac
      */
     protected $processPath  = './data/logs/main';
 
+    protected $childNumber = 1;
+
+    /**
+     *
+     */
     public function init()
     {
+        $application = Application::init(
+            require __DIR__ . '/../../../../config/application.config.php'
+        );
+        $this->setServiceManager($application->getServiceManager());
     }
 
     /**
@@ -41,9 +52,16 @@ class MainDaemon extends AbstractLoopDaemon implements EventManagerAwareInterfac
      */
     public function cycle()
     {
-        while (1) {
-            //consume на очередь.
-            sleep(2);
+        /** @var Daemon $daemonService */
+        $daemonService = $this->getServiceManager()->get(Daemon::class);
+
+        while (true) {
+            try {
+                $daemonService->mainDaemonCycle();
+            } catch (\Exception $e) {
+                $this->log('%s %s', get_class($e), $e->getMessage());
+                throw $e;
+            }
         }
     }
 }

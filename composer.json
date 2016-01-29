@@ -7,6 +7,8 @@
     "php": ">=5.5",
     "ext-pcntl": "*",
     "ext-posix" : "*",
+    "ext-shmop" : "*",
+    "ext-sockets": "*",
     "kuai6/queue": "dev-master",
     "doctrine/orm": "*",
     "doctrine/migrations": "*",
@@ -26,9 +28,9 @@
       "mkdir -p public/assets;  chmod -R 777 public/assets"
     ],
     "post-update-cmd" : [
-      "chmod -R 777 data/cache",
-      "chmod -R 777 data/logs",
-      "chmod -R 777 public/assets",
+      "mkdir -p data/cache; chmod -R 777 data/cache",
+      "mkdir -p data/logs; chmod -R 777 data/logs",
+      "mkdir -p public/assets; chmod -R 777 public/assets",
       "sh bin/classmap_gen.sh",
       "sh bin/templatemap_gen.sh"
     ]

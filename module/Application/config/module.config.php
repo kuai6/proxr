@@ -2,11 +2,18 @@
 
 namespace Application;
 
+use Application\Activity\ActivityManager;
+use Application\Activity\ActivityManagerFactory;
+use Application\Activity\Invoker;
 use Application\Controller\ConsoleController;
 use Application\Controller\IndexController;
-use Application\Daemon\DeviceDaemon;
+use Application\Daemon\ContactClosureDaemon;
 use Application\Daemon\MainDaemon;
 use Application\Daemon\TestDaemon;
+use Application\Service\Activity;
+use Application\Service\ContactClosure as ContactClosureService;
+use Application\Service\Daemon as DaemonService;
+use Application\Service\Queue as QueueService;
 
 return array_merge(
     include 'console.config.php',
@@ -21,11 +28,24 @@ return array_merge(
         ],
         'factories' => [
             'translator' => 'Zend\Mvc\Service\TranslatorServiceFactory',
+            ActivityManager::class => ActivityManagerFactory::class
         ],
         'invokables' => [
+            /** Daemons */
             TestDaemon::class => TestDaemon::class,
-            DeviceDaemon::class => DeviceDaemon::class,
+            ContactClosureDaemon::class => ContactClosureDaemon::class,
             MainDaemon::class => MainDaemon::class,
+
+            /** Services */
+            Activity::class                 => Activity::class,
+            ContactClosureService::class    => ContactClosureService::class,
+            DaemonService::class            => DaemonService::class,
+            QueueService::class             => QueueService::class,
+
+            Invoker::class                  => Invoker::class,
+        ],
+        'aliases' =>[
+            'ApplicationEntityManager' => 'doctrine.entity_manager.orm_default'
         ]
     ],
     'translator' => [

@@ -16,12 +16,14 @@ use Doctrine\ORM\Mapping as ORM;
 class AbstractDevice
 {
     /**
+     * Device Id
      * @var integer
+     *
      * @ORM\Id()
-     * @ORM\Column(name="id")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\Column(name="id", type="integer")
      */
     protected $id;
-
 
     /**
      * @return mixed

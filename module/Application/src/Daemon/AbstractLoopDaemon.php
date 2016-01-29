@@ -596,6 +596,15 @@ abstract class AbstractLoopDaemon
     }
 
     /**
+     * @param $title
+     * @return mixed
+     */
+    public function setProcessTitle($title)
+    {
+        return $this->processTitle = $title;
+    }
+
+    /**
      * Делает отметку в pid-файле с временем и комментарием
      *
      * @param string $comment

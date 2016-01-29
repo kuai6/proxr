@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<activity event="contactClosure" bit="1" on="up">
+    <trigger>
+        <sequence>
+            <assign name="ContactClosureId" value="1" />
+            <assignFromRepository name="ContactClosureEntity" repository="\Application\Entity\Device" id="ContactClosureId" />
+            <device device="ContactClosureEntity" action="get" bank="3" bit="0" out="ContactClosureBitValue" />
+            <assign name="RelayId" value="3" />
+            <assignFromRepository name="RelayEntity" repository="\Application\Entity\Device" id="RelayId" />
+            <if variable="ContactClosureBitValue" operand="eq" value="1" type="int">
+                <sequence>
+                    <assign name="on" value="Relay on" />
+                    <log name="on" />
+                    <device device="RelayEntity" action="set" bank="2" bit="7" value="0" />
+                    <device device="RelayEntity" action="get" bank="2" bit="7" out="RelayOnValue" />
+                </sequence>
+            </if>
+            <if variable="ContactClosureBitValue" operand="eq" value="0" type="int">
+                <sequence>
+                    <assign name="off" value="Relay off" />
+                    <log name="off" />
+                    <device device="RelayEntity" action="set" bank="2" bit="7" value="1" />
+                    <device device="RelayEntity" action="get" bank="2" bit="7" out="RelayOffValue" />
+                </sequence>
+            </if>
+        </sequence>
+    </trigger>
+</activity>

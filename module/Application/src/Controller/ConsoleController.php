@@ -1,8 +1,14 @@
 <?php
 namespace Application\Controller;
 
-use Application\Daemon\DeviceDaemon;
+use Application\Command\Adapter\Socket;
+use Application\Command\ContactClosure;
+use Application\Daemon\ContactClosureDaemon;
 use Application\Daemon\MainDaemon;
+use Application\Daemon\TestDaemon;
+use Application\Entity\Bank;
+use Application\Entity\Device;
+use Application\Service\Queue;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Mvc\MvcEvent;
 use Zend\Console\Request as ConsoleRequest;
@@ -36,8 +42,8 @@ class ConsoleController extends AbstractActionController
             'main' => [
                 'class' => MainDaemon::class
             ],
-            'device' => [
-                'class' => DeviceDaemon::class,
+            'contactClosureDevice' => [
+                'class' => ContactClosureDaemon::class,
             ],
         ];
 
@@ -55,8 +61,8 @@ class ConsoleController extends AbstractActionController
      */
     public function testAction()
     {
-        /** @var DeviceDaemon $daemon */
-        $daemon = $this->getServiceLocator()->get('Application\Daemon\DeviceDaemon');
+        /** @var TestDaemon $daemon */
+        $daemon = $this->getServiceLocator()->get(TestDaemon::class);
         /** @var ConsoleRequest $request */
         $request = $this->getRequest();
         $options = $request->getParams()->toArray();
@@ -77,6 +83,48 @@ class ConsoleController extends AbstractActionController
                 $daemon->stop();
                 $daemon->start();
                 break;
+        }
+    }
+
+    public function contactClosureDeviceDaemonAction()
+    {
+        /** @var \Doctrine\ORM\EntityManager $entityManager */
+        $entityManager = $this->getServiceLocator()->get('doctrine.entity_manager.orm_default');
+        /** @var Device $device */
+        $device = $entityManager->getRepository(Device::class)->findOneBy(['id' => 1]);
+        /** @var ContactClosureDaemon $daemon */
+        $daemon = $this->getServiceLocator()->get(ContactClosureDaemon::class);
+        $daemon->setDevice($device);
+        $command = new ContactClosure();
+        $command->setAdapter(new Socket());
+        $command->getAdapter()->connect($device->getIp(), $device->getPort());
+        $daemon->setCommand($command);
+        $daemon->setCommandAction('getAllStatuses');
+
+        $statuses = [];
+        /** @var Bank $bank */
+        foreach ($device->getBanks() as $bank) {
+            $statuses[$bank->getName()] = $bank->getByte();
+        }
+        $daemon->setStatuses($statuses);
+        $daemon->start();
+    }
+
+    /**
+     * Инициализация всего окружения
+     */
+    public function systemInitAction()
+    {
+        $config = $this->getServiceLocator()->get('config');
+        if (array_key_exists('queue', $config)) {
+            /** @var Queue $queueService */
+            $queueService = $this->getServiceLocator()->get(Queue::class);
+            if (array_key_exists('exchanges', $config['queue'])) {
+                $queueService->initExchanges($config['queue']['exchanges']);
+            }
+            if (array_key_exists('queues', $config['queue'])) {
+                $queueService->initQueues($config['queue']['queues']);
+            }
         }
     }
 }
