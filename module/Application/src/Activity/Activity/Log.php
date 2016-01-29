@@ -10,6 +10,7 @@ use Zend\Log\Writer\Stream;
 
 class Log extends AbstractActivity
 {
+    //just for test
     protected $logFile = __DIR__ .'/../../../../../data/logs/test.log';
 
 

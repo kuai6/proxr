@@ -48,4 +48,23 @@ class Bank extends EntityRepository
             'name' => $bankName
         ]);
     }
+
+    /**
+     * @param int $deviceId
+     * @param string $bankName
+     * @return array
+     */
+    public function getBankByDeviceAndNameDBAL($deviceId, $bankName)
+    {
+        $query = $this->getEntityManager()->getConnection()->createQueryBuilder();
+
+        $query->select('*')
+            ->from($this->getClassMetadata()->getTableName(), 'b')
+            ->where('b.deviceId = :deviceId')
+            ->andWhere('b.name = :name')
+            ->setParameter('deviceId', $deviceId)
+            ->setParameter('name', $bankName);
+        return $query->execute()->fetch(\PDO::FETCH_ASSOC);
+    }
+
 }

@@ -1,6 +1,7 @@
 <?php
 
 namespace Application\Event;
+use Application\Entity\EventLog;
 
 /**
  * Class Event
@@ -24,6 +25,9 @@ class Event extends AbstractEvent
 
     /** @var  string */
     protected $on;
+
+    /** @var EventLog */
+    protected $eventLog;
 
     /**
      * @return string
@@ -113,5 +117,21 @@ class Event extends AbstractEvent
     {
         $this->on = $on;
         return $this;
+    }
+
+    /**
+     * @return EventLog
+     */
+    public function getEventLog()
+    {
+        return $this->eventLog;
+    }
+
+    /**
+     * @param EventLog $eventLog
+     */
+    public function setEventLog($eventLog)
+    {
+        $this->eventLog = $eventLog;
     }
 }

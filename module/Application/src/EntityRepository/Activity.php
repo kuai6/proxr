@@ -2,7 +2,6 @@
 
 namespace Application\EntityRepository;
 
-use Application\Entity\Bank;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -17,7 +16,7 @@ class Activity extends EntityRepository
         $query = $this->getEntityManager()->getConnection()->createQueryBuilder();
         $query->select('a.*')
             ->from($this->getClassMetadata()->getTableName(), 'a')
-            ->innerJoin('a', $this->getEntityManager()->getClassMetadata(Bank::class)->getTableName(), 'b', 'b.id = a.bankId')
+            ->innerJoin('a', $this->getEntityManager()->getClassMetadata(\Application\Entity\Bank::class)->getTableName(), 'b', 'b.id = a.bankId')
             ->where('a.event = :eventName')
             ->andWhere('a.deviceId = :deviceId')
             ->andWhere('b.name = :bankName')

@@ -34,6 +34,8 @@ class MainDaemon extends AbstractLoopDaemon implements  ServiceManagerAwareInter
      */
     protected $processPath  = './data/logs/main';
 
+    protected $childNumber = 1;
+
     /**
      *
      */
