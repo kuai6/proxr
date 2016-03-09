@@ -9,13 +9,36 @@
 
 namespace Application\Controller;
 
+use Application\EntityRepository\Device;
+use Application\Form\Device\View;
+use Doctrine\ORM\EntityManager;
+use Zend\Form\FormElementManager;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
 class IndexController extends AbstractActionController
 {
+
+
+
     public function indexAction()
     {
-        return new ViewModel();
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
+        /** @var Device $deviceRepository */
+        $deviceRepository = $entityManager->getRepository(\Application\Entity\Device::class);
+        /** @var \Application\Entity\Device $device */
+        $device = $deviceRepository->find(1);
+
+
+        /** @var FormElementManager $formElementManager */
+        $formElementManager = $this->getServiceLocator()->get('FormElementManager');
+        $form = $formElementManager->get(View::class);
+        $form->bind($device);
+
+
+        return new ViewModel([
+            'form' => $form
+        ]);
     }
 }

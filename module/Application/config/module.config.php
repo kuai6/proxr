@@ -6,6 +6,7 @@ use Application\Activity\ActivityManager;
 use Application\Activity\ActivityManagerFactory;
 use Application\Activity\Invoker;
 use Application\Controller\ConsoleController;
+use Application\Controller\DeviceController;
 use Application\Controller\IndexController;
 use Application\Daemon\ContactClosureDaemon;
 use Application\Daemon\MainDaemon;
@@ -61,7 +62,8 @@ return array_merge(
     'controllers' => [
         'invokables' => [
             'Application\Controller\Index' => IndexController::class,
-            'Application\Controller\Console' => ConsoleController::class
+            'Application\Controller\Console' => ConsoleController::class,
+            'Application\Controller\Device' => DeviceController::class,
         ],
     ],
     'view_manager' => [

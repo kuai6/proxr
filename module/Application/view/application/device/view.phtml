@@ -1,0 +1,56 @@
+<?php
+/**
+ * @var \Application\Entity\Device $device
+ *
+ */
+?>
+<div class="col-lg-6">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>Device view: <?php echo $device->getName(); ?></h5>
+        </div>
+        <div class="ibox-content">
+            <table class="table">
+                <tbody>
+                <tr>
+                    <td>Name</td> <td><?php echo $device->getName(); ?></td>
+                </tr>
+                <tr>
+                    <td>Status</td><td><?php echo $device->getStatus()->getCode(); ?></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="col-lg-6">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>Banks</h5>
+        </div>
+        <div class="ibox-content">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Data</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>1</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

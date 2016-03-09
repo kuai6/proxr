@@ -1,0 +1,32 @@
+<?php
+/**
+ * @var \Doctrine\Common\Collections\ArrayCollection $devices
+ * @var \Application\Entity\Device $device
+ *
+ */
+?>
+<div class="ibox-content">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Device name</th>
+            <th>Host:port</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach($devices as $device) { ?>
+            <tr>
+                <td><?php echo $device->getId(); ?></td>
+                <td><a href="<?php echo $this->url('application/default', ['controller' => 'device', 'action' => 'view']);?>">
+                        <?php echo $device->getName(); ?>
+                    </a>
+                </td>
+                <td><?php echo sprintf('%s:%s', $device->getIp(), $device->getPort()); ?></td>
+                <td><?php echo $device->getStatus()->getCode(); ?></td>
+            </tr>
+        <?php } ?>
+        </tbody>
+    </table>
+</div>
