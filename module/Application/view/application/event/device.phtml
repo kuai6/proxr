@@ -1,0 +1,60 @@
+<div class="ibox float-e-margins">
+    <div class="ibox-title">
+        <h5>Display events</h5>
+    </div>
+    <div class="ibox-content">
+        <div class="table-responsive">
+            <table class="table table-striped" id="events">
+                <thead>
+                <tr>
+                    <th>Date time</th>
+                    <th>Bank </th>
+                    <th>Bit 0 </th>
+                    <th>Bit 1 </th>
+                    <th>Bit 2 </th>
+                    <th>Bit 3 </th>
+                    <th>Bit 4 </th>
+                    <th>Bit 5 </th>
+                    <th>Bit 6 </th>
+                    <th>Bit 7 </th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+<script type="text/javascript">
+    var backendUrl = '<?php echo $this->url('event/last', ['deviceId' => $deviceId, 'ts' => ':ts' ]); ?>';
+    var i = 0;
+    $(document).ready(function(){
+        var currentTs = new Date();
+        var interval = setInterval(function() {
+            i++;
+            backendUrl = backendUrl.replace(':ts', currentTs.getTime());
+            $.get(backendUrl, handle);
+        }, 2000);
+    });
+
+    var handle = function (data) {
+        var rowTemplate = '<tr>'
+            + '<td>:dateTime</td>'
+            + '<td>:bank</td>'
+            + '<td>:bit0</td>'
+            + '<td>:bit1</td>'
+            + '<td>:bit2</td>'
+            + '<td>:bit3</td>'
+            + '<td>:bit4</td>'
+            + '<td>:bit5</td>'
+            + '<td>:bit6</td>'
+            + '<td>:bit7</td>'
+            + '<td><a href="#">Add activity</a></td>'
+            +'</tr>';
+        rowTemplate = rowTemplate.replace(':dateTime', i);
+        $('table#events tbody').html(rowTemplate+$('table#events tbody').html());
+    };
+</script>

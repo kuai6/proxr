@@ -18,27 +18,19 @@ use Zend\View\Model\ViewModel;
 
 class IndexController extends AbstractActionController
 {
-
-
-
+    /**
+     * @return array
+     */
     public function indexAction()
     {
         /** @var EntityManager $entityManager */
         $entityManager = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
         /** @var Device $deviceRepository */
         $deviceRepository = $entityManager->getRepository(\Application\Entity\Device::class);
-        /** @var \Application\Entity\Device $device */
-        $device = $deviceRepository->find(1);
+        $devices = $deviceRepository->findAll();
 
-
-        /** @var FormElementManager $formElementManager */
-        $formElementManager = $this->getServiceLocator()->get('FormElementManager');
-        $form = $formElementManager->get(View::class);
-        $form->bind($device);
-
-
-        return new ViewModel([
-            'form' => $form
-        ]);
+        return [
+            'devices' => $devices
+        ];
     }
 }

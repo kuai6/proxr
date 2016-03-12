@@ -13,31 +13,59 @@ return [
                     ],
                 ],
             ],
-            // The following is a route to simplify getting started creating
-            // new controllers and actions without needing to create a new
-            // module. Simply drop new controllers in, and you can access them
-            // using the path /application/:controller/:action
-            'application' => [
+            'device' => [
                 'type'    => 'Literal',
                 'options' => [
-                    'route'    => '/application',
-                    'defaults' => [
-                        '__NAMESPACE__' => 'Application\Controller',
-                        'controller'    => 'Index',
-                        'action'        => 'index',
-                    ],
+                    'route'    => '/device',
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
-                    'default' => [
+                    'view' => [
                         'type'    => 'Segment',
                         'options' => [
-                            'route'    => '/[:controller[/:action]]',
+                            'route'    => '/view/:id',
                             'constraints' => [
-                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                                'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'id' => '[0-9]*',
                             ],
                             'defaults' => [
+                                'controller' => 'Application\Controller\Device',
+                                'action' => 'view'
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'event' => [
+                'type'    => 'Literal',
+                'options' => [
+                    'route'    => '/event',
+                ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'last' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/last/:deviceId/:ts',
+                            'constraints' => [
+                                'deviceId' => '[0-9]*',
+                                'ts' => '[0-9]*',
+                            ],
+                            'defaults' => [
+                                'controller' => 'Application\Controller\Event',
+                                'action' => 'last'
+                            ],
+                        ],
+                    ],
+                    'device' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/device/:deviceId',
+                            'constraints' => [
+                                'deviceId' => '[0-9]*',
+                            ],
+                            'defaults' => [
+                                'controller' => 'Application\Controller\Event',
+                                'action' => 'device'
                             ],
                         ],
                     ],

@@ -1,54 +1,38 @@
+<?php
+/**
+ * @var \Doctrine\Common\Collections\ArrayCollection $devices
+ * @var \Application\Entity\Device $device
+ */
+
+?>
 <div class="row">
+    <?php foreach($devices as $device) { ?>
+        <?php
+            $status = $device->getStatus()->getCode() === \Application\Entity\Status\Device::STATUS_ACTIVE ? 'label-primary' : 'label-danger';
+        ?>
     <div class="col-lg-3">
         <div class="ibox float-e-margins">
             <div class="ibox-title">
-                <span class="label label-success pull-right">Monthly</span>
-                <h5>Income</h5>
+                <span class="label <?php echo $status; ?> pull-right"><?php echo $device->getStatus()->getCode(); ?></span>
+                <h5><?php echo $device->getName(); ?></h5>
             </div>
             <div class="ibox-content">
-                <h1 class="no-margins">40 886,200</h1>
-                <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>
-                <small>Total income</small>
+                <h1 class="no-margins">Scripts running: 0</h1>
+                <div class="stat-percent font-bold text-success"><?php echo $device->getBanks()->count(); ?></div>
+                <small>Total banks</small>
+                <br clear="all" />
+                <div class="btn-group">
+                    <button data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle" aria-expanded="false">Action <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li><a href="<?php echo $this->url('device/view', ['id' => $device->getId()]); ?>">Details</a></li>
+                        <li><a href="#">Disable</a></li>
+                        <li><a href="#">Show events</a></li>
+                        <li class="divider"></li>
+                        <li><a href="<?php echo $this->url('event/device', ['deviceId' => $device->getId()]); ?>">Add activity</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-lg-3">
-        <div class="ibox float-e-margins">
-            <div class="ibox-title">
-                <span class="label label-info pull-right">Annual</span>
-                <h5>Orders</h5>
-            </div>
-            <div class="ibox-content">
-                <h1 class="no-margins">275,800</h1>
-                <div class="stat-percent font-bold text-info">20% <i class="fa fa-level-up"></i></div>
-                <small>New orders</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3">
-        <div class="ibox float-e-margins">
-            <div class="ibox-title">
-                <span class="label label-primary pull-right">Today</span>
-                <h5>Vistits</h5>
-            </div>
-            <div class="ibox-content">
-                <h1 class="no-margins">106,120</h1>
-                <div class="stat-percent font-bold text-navy">44% <i class="fa fa-level-up"></i></div>
-                <small>New visits</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3">
-        <div class="ibox float-e-margins">
-            <div class="ibox-title">
-                <span class="label label-danger pull-right">Low value</span>
-                <h5>User activity</h5>
-            </div>
-            <div class="ibox-content">
-                <h1 class="no-margins">80,600</h1>
-                <div class="stat-percent font-bold text-danger">38% <i class="fa fa-level-down"></i></div>
-                <small>In first month</small>
-            </div>
-        </div>
-    </div>
+    <?php } ?>
 </div>

@@ -40,4 +40,28 @@ class EventLog extends EntityRepository
         $id = $query->getConnection()->lastInsertId();
         return $this->find($id);
     }
+
+    public function getLast($device, $dateTime)
+    {
+        if($dateTime instanceof \DateTime) {
+            $dateTime = $dateTime->format('Y-m-d H:i:s.u');
+        }
+
+        /** @var QueryBuilder $qb */
+        $qb = $this->getEntityManager()->getConnection()->createQueryBuilder();
+
+        $query = $qb->select('*')
+                    ->from($this->getClassMetadata()->getTableName(), 'l')
+                    ->where('l.deviceId = :device')
+                    ->andWhere('l.dateTime >= :dateTime')
+                    ->orderBy('dateTime', 'DESC')
+                    ->setParameters([
+                        'device' => $device,
+                        'dateTime' => $dateTime
+                    ]);
+        $result = $query->execute()->fetchAll();
+
+        return $result;
+    }
+
 }

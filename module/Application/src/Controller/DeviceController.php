@@ -30,12 +30,13 @@ class DeviceController extends AbstractActionController
 
     public function viewAction()
     {
+        $id = $this->params()->fromRoute('id', null);
         /** @var EntityManager $entityManager */
         $entityManager = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
         /** @var \Application\EntityRepository\Device $deviceRepository */
         $deviceRepository = $entityManager->getRepository(\Application\Entity\Device::class);
         /** @var \Application\Entity\Device $device */
-        $device = $deviceRepository->find(1);
+        $device = $deviceRepository->find((int) $id);
 
         return [
            'device' => $device

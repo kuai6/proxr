@@ -7,6 +7,7 @@ use Application\Activity\ActivityManagerFactory;
 use Application\Activity\Invoker;
 use Application\Controller\ConsoleController;
 use Application\Controller\DeviceController;
+use Application\Controller\EventController;
 use Application\Controller\IndexController;
 use Application\Daemon\ContactClosureDaemon;
 use Application\Daemon\MainDaemon;
@@ -64,6 +65,7 @@ return array_merge(
             'Application\Controller\Index' => IndexController::class,
             'Application\Controller\Console' => ConsoleController::class,
             'Application\Controller\Device' => DeviceController::class,
+            'Application\Controller\Event' => EventController::class,
         ],
     ],
     'view_manager' => [
@@ -80,6 +82,9 @@ return array_merge(
         ],
         'template_path_stack' => [
             __DIR__ . '/../view',
+        ],
+        'strategies' => [
+            'ViewJsonStrategy',
         ],
     ],
 ]);
