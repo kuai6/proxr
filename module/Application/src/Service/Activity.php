@@ -13,9 +13,36 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
  * Class Activity
  * @package Application\Service
  */
-class Activity extends AbstractService implements ServiceLocatorAwareInterface
+class Activity extends AbstractService
 {
-    use ServiceLocatorAwareTrait;
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    /**
+     * @var ActivityManager
+     */
+    private $activityManager;
+
+    /**
+     * @var Invoker
+     */
+    private $activityInvoker;
+
+    /**
+     * Activity constructor.
+     * @param EntityManager $entityManager
+     * @param ActivityManager $activityManager
+     * @param Invoker $activityInvoker
+     */
+    public function __construct(EntityManager $entityManager, ActivityManager $activityManager, Invoker $activityInvoker)
+    {
+        $this->entityManager = $entityManager;
+        $this->activityManager = $activityManager;
+        $this->activityInvoker = $activityInvoker;
+    }
+
 
     /**
      * @param Event $event
@@ -23,23 +50,15 @@ class Activity extends AbstractService implements ServiceLocatorAwareInterface
      */
     public function contactClosureEventHandler($event)
     {
-        /** @var EntityManager $entityManager */
-        $entityManager = $this->getServiceLocator()->get('ApplicationEntityManager');
-
         /** @var \Application\EntityRepository\Activity $activityRepository */
-        $activityRepository = $entityManager->getRepository(\Application\Entity\Activity::class);
-
+        $activityRepository = $this->entityManager->getRepository(\Application\Entity\Activity::class);
         $activities = $activityRepository->getActivitiesDBAL($event->getName(), $event->getDevice(), $event->getBank());
-        /** @var Invoker $activityInvoker */
-        $activityInvoker = $this->getServiceLocator()->get(Invoker::class);
-        /** @var ActivityManager $activityManager */
-        $activityManager = $this->getServiceLocator()->get(ActivityManager::class);
 
         foreach($activities as $activityData) {
             /** @var \Application\Activity\Activity\Activity $activity */
-            $activity = $activityManager->get('activity');
+            $activity = $this->activityManager->get('activity');
             /** @var string $metadata */
-            $activityInvoker->invoke($activity, [
+            $this->activityInvoker->invoke($activity, [
                 $activityData
             ], $activityData['metadata']);
         }

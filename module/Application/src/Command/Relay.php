@@ -58,7 +58,7 @@ class Relay extends AbstractCommand
         $bit = sprintf('BIT_%d_ON', (int) $bit);
 
         $self = new \ReflectionClass(__CLASS__);
-        if (!in_array($bit, array_keys($self->getConstants()))) {
+        if (!array_key_exists($bit, $self->getConstants())) {
             throw new RuntimeException(sprintf('Bit constant %s not found in %s', $bit, __CLASS__));
         }
         $this->sequence = [
@@ -82,21 +82,22 @@ class Relay extends AbstractCommand
      * @param int $bit
      * @return bool
      * @throws RuntimeException
+     * @throws \ReflectionException
      */
     public function off(Bank $bank, $bit)
     {
         if ($bank->getName() === null) {
             throw new RuntimeException('Bank name not specified');
         }
-        $bit = sprintf('BIT_%d_OFF', (int)$bit);
+        $bit_alias = sprintf('BIT_%d_OFF', (int)$bit);
 
         $self = new \ReflectionClass(__CLASS__);
-        if (!in_array($bit, array_keys($self->getConstants()))) {
-            throw new RuntimeException(sprintf('Bit constant %s not found in %s', $bit, __CLASS__));
+        if (!array_key_exists($bit_alias, $self->getConstants())) {
+            throw new RuntimeException(sprintf('Bit constant %s not found in %s', $bit_alias, __CLASS__));
         }
         $this->sequence = [
             self::CONTROL_COMMAND,
-            constant(sprintf('self::%s', $bit)),
+            constant(sprintf('self::%s', $bit_alias)),
             $bank->getName()
         ];
         $packFormat = 'C*';
@@ -115,6 +116,7 @@ class Relay extends AbstractCommand
      * @param int $bit
      * @return bool
      * @throws RuntimeException
+     * @throws \ReflectionException
      */
     public function toggle(Bank $bank, $bit)
     {
@@ -141,15 +143,15 @@ class Relay extends AbstractCommand
             throw new RuntimeException('Bank name not specified');
         }
 
-        $bit = sprintf('BIT_%d_STATUS', (int)$bit);
+        $bit_alias = sprintf('BIT_%d_STATUS', (int)$bit);
 
         $self = new \ReflectionClass(__CLASS__);
-        if (!in_array($bit, array_keys($self->getConstants()))) {
-            throw new RuntimeException(sprintf('Bit constant %s not found in %s', $bit, __CLASS__));
+        if (!array_key_exists($bit_alias, $self->getConstants())) {
+            throw new RuntimeException(sprintf('Bit constant %s not found in %s', $bit_alias, __CLASS__));
         }
         $this->sequence = [
             self::CONTROL_COMMAND,
-            constant(sprintf('self::%s', $bit)),
+            constant(sprintf('self::%s', $bit_alias)),
             $bank->getName()
         ];
         $packFormat = 'C*';

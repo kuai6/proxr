@@ -13,9 +13,21 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
  * Class QeueService
  * @package Application\Service
  */
-class Queue extends AbstractService implements ServiceLocatorAwareInterface
+class Queue extends AbstractService
 {
-    use ServiceLocatorAwareTrait;
+    /**
+     * @var Server
+     */
+    private $queueServer;
+
+    /**
+     * Queue constructor.
+     * @param Server $queueServer
+     */
+    public function __construct(Server $queueServer)
+    {
+        $this->queueServer = $queueServer;
+    }
 
     /**
      * @param $config
@@ -27,8 +39,6 @@ class Queue extends AbstractService implements ServiceLocatorAwareInterface
         if (count($config) === 0) {
             return true;
         }
-        /** @var Server $queueServer */
-        $queueServer = $this->getServiceLocator()->get(ServerFactory::class);
         try {
             foreach ($config as $exchangeName => $exchangeConfig) {
                 $type = AMQP_EX_TYPE_DIRECT;
@@ -36,8 +46,8 @@ class Queue extends AbstractService implements ServiceLocatorAwareInterface
                     $type = $exchangeConfig['type'];
                 }
                 $exchange = new Exchange($exchangeName, $type, $exchangeConfig);
-                $queueServer->deleteExchange($exchange);
-                $queueServer->declareExchange($exchange);
+                $this->queueServer->deleteExchange($exchange);
+                $this->queueServer->declareExchange($exchange);
             }
         } catch (\Exception $e) {
             throw $e;
@@ -56,8 +66,7 @@ class Queue extends AbstractService implements ServiceLocatorAwareInterface
         if (count($config) === 0) {
             return true;
         }
-        /** @var Server $queueServer */
-        $queueServer = $this->getServiceLocator()->get(ServerFactory::class);
+
         try {
             foreach ($config as $queueName => $queueConfig) {
                 $options = [];
@@ -65,14 +74,14 @@ class Queue extends AbstractService implements ServiceLocatorAwareInterface
                     $options = $queueConfig['options'];
                 }
                 $queue = new AmqpQueue($queueName, $options);
-                $queueServer->deleteQueue($queue);
-                $queueServer->declareQueue($queue);
+                $this->queueServer->deleteQueue($queue);
+                $this->queueServer->declareQueue($queue);
                 if (array_key_exists('bindTo', $queueConfig)) {
                     $routingKey = '';
                     if (array_key_exists('routingKey', $queueConfig)) {
                         $routingKey = $queueConfig['routingKey'];
                     }
-                    $queueServer->queueBind($queue, $queueConfig['bindTo'], $routingKey);
+                    $this->queueServer->queueBind($queue, $queueConfig['bindTo'], $routingKey);
                 }
             }
         } catch (\Exception $e) {

@@ -6,6 +6,7 @@ use Application\Command\ContactClosure;
 use Application\Daemon\ContactClosureDaemon;
 use Application\Daemon\MainDaemon;
 use Application\Daemon\TestDaemon;
+use Application\Daemon\UdpDaemon;
 use Application\Entity\Bank;
 use Application\Entity\Device;
 use Application\Service\Queue;
@@ -20,6 +21,39 @@ use Zend\Console\Request as ConsoleRequest;
 class ConsoleController extends AbstractActionController
 {
     /**
+     * @var \Doctrine\ORM\EntityManager
+     */
+    private $entityManager;
+
+    /**
+     * @var array
+     */
+    private $config = [];
+
+    /**
+     * @var Queue
+     */
+    private $queueService;
+
+    private $testDaemon;
+
+
+    private $daemonManager;
+
+    /**
+     * ConsoleController constructor.
+     * @param array $config
+     * @param \Doctrine\ORM\EntityManager $entityManager
+     * @param Queue $queueService
+     */
+    public function __construct(array $config = [], \Doctrine\ORM\EntityManager $entityManager, Queue $queueService)
+    {
+        $this->config = $config;
+        $this->entityManager = $entityManager;
+        $this->queueService = $queueService;
+    }
+
+    /**
      * @param MvcEvent $e
      * @return mixed
      */
@@ -32,6 +66,10 @@ class ConsoleController extends AbstractActionController
     }
 
 
+    /**
+     *
+     * @throws \RuntimeException
+     */
     public function daemonAction()
     {
         /** @var ConsoleRequest $request */
@@ -45,19 +83,23 @@ class ConsoleController extends AbstractActionController
             'contactClosureDevice' => [
                 'class' => ContactClosureDaemon::class,
             ],
+            'udp' => [
+                'class' => UdpDaemon::class,
+            ],
         ];
 
-        if (!in_array($options['daemonName'], array_keys($daemons))) {
-            throw new \Exception(sprintf('Daemon with name %s not found', $options['daemonName']));
+        if (!array_key_exists($options['daemonName'], $daemons)) {
+            throw new \RuntimeException(sprintf('Daemon with name %s not found', $options['daemonName']));
         }
 
         $daemonOptions = $daemons[$options['daemonName']];
         $daemon = $this->getServiceLocator()->get($daemonOptions['class']);
-        $daemon->$options['command']();
+        $daemon->{$options['command']}();
     }
 
     /**
      * Test daemon Action
+     * @throws \Application\Daemon\Exception\RuntimeException
      */
     public function testAction()
     {
@@ -88,10 +130,8 @@ class ConsoleController extends AbstractActionController
 
     public function contactClosureDeviceDaemonAction()
     {
-        /** @var \Doctrine\ORM\EntityManager $entityManager */
-        $entityManager = $this->getServiceLocator()->get('doctrine.entity_manager.orm_default');
         /** @var Device $device */
-        $device = $entityManager->getRepository(Device::class)->findOneBy(['id' => 1]);
+        $device = $this->entityManager->getRepository(Device::class)->findOneBy(['id' => 1]);
         /** @var ContactClosureDaemon $daemon */
         $daemon = $this->getServiceLocator()->get(ContactClosureDaemon::class);
         $daemon->setDevice($device);
@@ -112,18 +152,16 @@ class ConsoleController extends AbstractActionController
 
     /**
      * Инициализация всего окружения
+     * @throws \Exception
      */
     public function systemInitAction()
     {
-        $config = $this->getServiceLocator()->get('config');
-        if (array_key_exists('queue', $config)) {
-            /** @var Queue $queueService */
-            $queueService = $this->getServiceLocator()->get(Queue::class);
-            if (array_key_exists('exchanges', $config['queue'])) {
-                $queueService->initExchanges($config['queue']['exchanges']);
+        if (array_key_exists('queue', $this->config)) {
+            if (array_key_exists('exchanges', $this->config['queue'])) {
+                $this->queueService->initExchanges($this->config['queue']['exchanges']);
             }
-            if (array_key_exists('queues', $config['queue'])) {
-                $queueService->initQueues($config['queue']['queues']);
+            if (array_key_exists('queues', $this->config['queue'])) {
+                $this->queueService->initQueues($this->config['queue']['queues']);
             }
         }
     }

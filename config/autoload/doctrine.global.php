@@ -5,13 +5,15 @@ return [
     'doctrine' => [
         'connection' => [
             'orm_default' => [
+                'driverClass' => \Doctrine\DBAL\Driver\PDOPgSql\Driver::class,
                 'params' => [
-                    'driver' => 'pdo_mysql',
+                    'driver' => 'pdo_pgsql',
                     'host' => '127.0.0.1',
                     'user' => 'developer',
                     'password' => 'developer',
                     'dbname' => 'proxr',
                     'charset' => 'utf8',
+                    'port' => 5432,
                 ],
             ],
         ],

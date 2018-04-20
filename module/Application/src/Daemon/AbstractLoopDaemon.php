@@ -318,7 +318,7 @@ abstract class AbstractLoopDaemon
             $this->puid =  $params['puid'];
         }
 
-        $this->name = md5(uniqid(rand()));
+        $this->name = md5(uniqid(rand(), true));
         if (isset($this->params['logPath'])) {
             $this->setLogPath($this->params['logPath']);
         }
@@ -511,7 +511,9 @@ abstract class AbstractLoopDaemon
             // добавляем префикс родителя
             if ($this->isChild) {
                 if (!file_exists($path . $this->masterPid)) {
-                    @mkdir($path . $this->masterPid, 0775, true);
+                    if (!mkdir($path . $this->masterPid, 0775, true) && !is_dir($path . $this->masterPid)) {
+                        throw new \RuntimeException(sprintf('Directory "%s" was not created', $path . $this->masterPid));
+                    }
                     @chmod($path . $this->masterPid, 0775);
                 }
                 $pid = $this->masterPid . DIRECTORY_SEPARATOR . $pid;
@@ -615,7 +617,9 @@ abstract class AbstractLoopDaemon
     {
         $pidFile = $pidFile === false ? $this->getPidFile() : $pidFile;
         if ($pidFile !== false && !file_exists(dirname($pidFile))) {
-            @mkdir(dirname($pidFile), 0775, true);
+            if (!mkdir(dirname($pidFile), 0775, true) && !is_dir(dirname($pidFile))) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', dirname($pidFile)));
+            }
             @chmod(dirname($pidFile), 0775);
         }
 
@@ -953,7 +957,7 @@ abstract class AbstractLoopDaemon
         $this->initMaster();
 
         $this->isDebug = file_exists($this->getProcessPath() . DIRECTORY_SEPARATOR. '.debug');
-        pcntl_signal(SIGCHLD, SIG_IGN);
+        //pcntl_signal(SIGCHLD, SIG_IGN);
         $pid = @pcntl_fork();
         if ($pid === -1) {
             throw new Exception\RuntimeException('Forking process failed');
@@ -1129,6 +1133,8 @@ abstract class AbstractLoopDaemon
      */
     public function sigHandler($signal)
     {
+        $this->log("SIGNAL RECEIVED: " . $signal);
+
         switch ($signal) {
             case SIGTERM:
             case SIGHUP:
@@ -1246,7 +1252,9 @@ abstract class AbstractLoopDaemon
                 . $pid . '.log';
 
             if (!file_exists(dirname($this->logFile))) {
-                @mkdir(dirname($this->logFile), 0775, true);
+                if (!mkdir(dirname($this->logFile), 0775, true) && !is_dir(dirname($this->logFile))) {
+                    throw new \RuntimeException(sprintf('Directory "%s" was not created', dirname($this->logFile)));
+                }
                 @chmod(dirname($this->logFile), 0775);
             }
             file_put_contents($this->logFile, '', FILE_APPEND);
@@ -1398,7 +1406,9 @@ abstract class AbstractLoopDaemon
         $this->ipcPath = rtrim($ipcPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR
             . get_class($this). DIRECTORY_SEPARATOR;
         if (!file_exists($this->ipcPath)) {
-            @mkdir($this->ipcPath, 0775, true);
+            if (!mkdir($this->ipcPath, 0775, true) && !is_dir($this->ipcPath)) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $this->ipcPath));
+            }
         }
         return $this;
     }

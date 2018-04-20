@@ -3,16 +3,35 @@
 namespace Application\Activity;
 
 use Application\Activity\Activity\Activity;
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorAwareTrait;
+use Zend\ServiceManager\ServiceManager;
 
 /**
  * Class Invoker
  * @package Application\Activity
  */
-class Invoker implements ServiceLocatorAwareInterface
+class Invoker
 {
-    use ServiceLocatorAwareTrait;
+    /**
+     * @var ActivityManager
+     */
+    private $activityManager;
+
+    /**
+     * @var ServiceManager
+     */
+    private $serviceLocator;
+
+    /**
+     * Invoker constructor.
+     * @param ActivityManager $activityManager
+     * @param ServiceManager $serviceLocator
+     */
+    public function __construct(ActivityManager $activityManager, ServiceManager $serviceLocator)
+    {
+        $this->activityManager = $activityManager;
+        $this->serviceLocator = $serviceLocator;
+    }
+
 
     /**
      * @param Activity $activity
@@ -22,16 +41,14 @@ class Invoker implements ServiceLocatorAwareInterface
      */
     public function invoke(Activity $activity, $arguments = [], $metadata)
     {
-        $sl = $this->getServiceLocator();
         $context = $this->getActivityContext($activity, $metadata);
         foreach ($arguments as $k => $v) {
             $context->$k = $v;
         }
         $context->setArguments($arguments);
-        $context->set('serviceLocator', $sl);
-        /** @var ActivityManager $activityManager */
-        $activityManager = $this->getServiceLocator()->get(ActivityManager::class);
-        $context->setActivityManager($activityManager);
+        $context->set('serviceLocator', $this->serviceLocator);
+
+        $context->setActivityManager($this->activityManager);
 
         $context->getActivity()->execute($context);
 
@@ -43,7 +60,7 @@ class Invoker implements ServiceLocatorAwareInterface
      * @param string $metadata
      * @return Context
      */
-    protected function getActivityContext(Activity &$activity, $metadata)
+    protected function getActivityContext(Activity $activity, $metadata)
     {
         $context = new Context();
         $metadata = new \SimpleXMLElement($metadata);

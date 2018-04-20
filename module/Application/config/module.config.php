@@ -5,15 +5,29 @@ namespace Application;
 use Application\Activity\ActivityManager;
 use Application\Activity\ActivityManagerFactory;
 use Application\Activity\Invoker;
+use Application\Activity\InvokerFactory;
 use Application\Controller\ConsoleController;
+use Application\Controller\ConsoleControllerFactory;
 use Application\Controller\IndexController;
 use Application\Daemon\ContactClosureDaemon;
 use Application\Daemon\MainDaemon;
 use Application\Daemon\TestDaemon;
+use Application\Daemon\UdpDaemon;
+use Application\Listener\IncomeListener;
+use Application\Listener\IncomeListenerFactory;
 use Application\Service\Activity;
+use Application\Service\ActivityFactory;
+use Application\Service\BankService;
+use Application\Service\BankServiceFactory;
 use Application\Service\ContactClosure as ContactClosureService;
 use Application\Service\Daemon as DaemonService;
+use Application\Service\DeviceService;
+use Application\Service\DeviceServiceFactory;
 use Application\Service\Queue as QueueService;
+use Application\Service\QueueFactory;
+use Application\Service\UdpService;
+use Application\Service\UdpServiceFactory;
+use Kuai6\Queue\ServerFactory;
 
 return array_merge(
     include 'console.config.php',
@@ -70,21 +84,29 @@ return array_merge(
         ],
         'factories' => [
             'translator' => 'Zend\Mvc\Service\TranslatorServiceFactory',
-            ActivityManager::class => ActivityManagerFactory::class
+            ActivityManager::class  => ActivityManagerFactory::class,
+
+            /** Services */
+            Activity::class         => ActivityFactory::class,
+            QueueService::class     => QueueFactory::class,
+            Invoker::class          => InvokerFactory::class,
+
+            DeviceService::class    => DeviceServiceFactory::class,
+            BankService::class      => BankServiceFactory::class,
+            IncomeListener::class   => IncomeListenerFactory::class,
         ],
         'invokables' => [
             /** Daemons */
             TestDaemon::class => TestDaemon::class,
             ContactClosureDaemon::class => ContactClosureDaemon::class,
             MainDaemon::class => MainDaemon::class,
+            UdpDaemon::class => UdpDaemon::class,
 
-            /** Services */
-            Activity::class                 => Activity::class,
+
             ContactClosureService::class    => ContactClosureService::class,
             DaemonService::class            => DaemonService::class,
-            QueueService::class             => QueueService::class,
 
-            Invoker::class                  => Invoker::class,
+
         ],
         'aliases' =>[
             'ApplicationEntityManager' => 'doctrine.entity_manager.orm_default'
@@ -103,7 +125,9 @@ return array_merge(
     'controllers' => [
         'invokables' => [
             'Application\Controller\Index' => IndexController::class,
-            'Application\Controller\Console' => ConsoleController::class
+        ],
+        'factories' => [
+            'Application\Controller\Console' => ConsoleControllerFactory::class,
         ],
     ],
     'view_manager' => [

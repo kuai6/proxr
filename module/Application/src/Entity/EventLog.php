@@ -16,7 +16,7 @@ class EventLog extends AbstractEventLog
      * Date and time with fractal microseconds
      * @var \DateTime
      *
-     * @ORM\Column(name="dateTime", type="datetime", nullable=false, columnDefinition="DATETIME(6) NOT NULL")
+     * @ORM\Column(name="dateTime", type="datetime", nullable=false)
      */
     protected $dateTime;
 

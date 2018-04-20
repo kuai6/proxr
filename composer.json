@@ -21,6 +21,12 @@
     "fabpot/php-cs-fixer" : "*"
 
   },
+  "autoload": {
+    "psr-4": {
+      "Application\\": "module/Application/src",
+      "Server\\": "module/Server/src"
+    }
+  },
   "scripts": {
     "post-install-cmd": [
       "mkdir -p data/cache; chmod -R 777 data/cache",
@@ -28,9 +34,7 @@
     ],
     "post-update-cmd" : [
       "mkdir -p data/cache; chmod -R 777 data/cache",
-      "mkdir -p data/logs; chmod -R 777 data/logs",
-      "sh bin/classmap_gen.sh",
-      "sh bin/templatemap_gen.sh"
+      "mkdir -p data/logs; chmod -R 777 data/logs"
     ]
   },
   "repositories": [

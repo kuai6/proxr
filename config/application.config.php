@@ -16,6 +16,7 @@ return [
         'Kuai6\\Queue',
 
         'Application',
+        'Server',
     ],
 
     // These are various options for the listeners attached to the ModuleManager
