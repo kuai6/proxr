@@ -1,5 +1,5 @@
 {
-  "name": "ProxR Application",
+  "name": "kuai6/proxr",
   "description": "",
   "license": "",
   "keywords": [],
@@ -9,18 +9,20 @@
     "ext-posix" : "*",
     "ext-shmop" : "*",
     "ext-sockets": "*",
-    "kuai6/queue": "dev-master",
-    "doctrine/orm": "*",
-    "doctrine/migrations": "*",
-    "doctrine/doctrine-orm-module" : "*",
-    "zendframework/zendframework": "^2.5"
+    "zendframework/zend-mvc": "^3.1",
+    "zendframework/zend-log": "^2.10",
+    "doctrine/doctrine-orm-module": "^2.1",
+    "doctrine/migrations": "^1.6"
   },
   "require-dev": {
-    "zendframework/zftool": "*",
-    "zendframework/zend-developer-tools": "dev-master",
-    "fabpot/php-cs-fixer" : "*"
-
+    "friendsofphp/php-cs-fixer": "^2.11"
   },
+  "autoload": {
+    "psr-4": {
+      "Application\\": "module/Application/src"
+    }
+  },
+
   "scripts": {
     "post-install-cmd": [
       "mkdir -p data/cache; chmod -R 777 data/cache",
@@ -28,15 +30,7 @@
     ],
     "post-update-cmd" : [
       "mkdir -p data/cache; chmod -R 777 data/cache",
-      "mkdir -p data/logs; chmod -R 777 data/logs",
-      "sh bin/classmap_gen.sh",
-      "sh bin/templatemap_gen.sh"
+      "mkdir -p data/logs; chmod -R 777 data/logs"
     ]
-  },
-  "repositories": [
-    {
-      "type": "git",
-      "url": "git@bitbucket.org:kuai6/queue.git"
-    }
-  ]
+  }
 }
