@@ -55,6 +55,12 @@ class Device extends AbstractDevice
     protected $port;
 
     /**
+     * @var \DateTime
+     * @ORM\Column(name="last_ping", type="datetime", nullable=true)
+     */
+    protected $lastPing;
+
+    /**
      * @return string
      */
     public function getName()
@@ -141,6 +147,24 @@ class Device extends AbstractDevice
     public function setIp($ip)
     {
         $this->ip = $ip;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getLastPing()
+    {
+        return $this->lastPing;
+    }
+
+    /**
+     * @param \DateTime $lastPing
+     * @return $this
+     */
+    public function setLastPing($lastPing)
+    {
+        $this->lastPing = $lastPing;
         return $this;
     }
 }

@@ -76,22 +76,53 @@ class IncomeListener extends AbstractListenerAggregate
                 'command' => ServerService::COMMAND_CONF,
                 'ip'    => $ip,
                 'port'  => $port,
-                'data'  => sprintf('%s%s', '', ''),
+                'data'  => sprintf('%s%s', '5000', '0500'),
             ]);
             $this->eventManager->trigger($outcome);
 
         } catch (\Exception $e) {
+            throw $e;
         }
 
     }
 
     public function onPing(EventInterface $event)
     {
+        $serial = $event->getParam('serial');
+        $ip = $event->getParam('ip');
+        $port = $event->getParam('port');
+
+
+        try {
+            $this->deviceService->ping($serial, $ip, $port);
+
+            $outcome = new OutcomeEvent();
+            $outcome->setName('outcome.event.'. ServerService::COMMAND_PONG);
+            $outcome->setParams([
+                'command' => ServerService::COMMAND_PONG,
+                'ip'    => $ip,
+                'port'  => $port,
+            ]);
+            $this->eventManager->trigger($outcome);
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
 
     }
 
     public function onData(EventInterface $event)
     {
+        $serial = $event->getParam('serial');
+        $ip = $event->getParam('ip');
+        $port = $event->getParam('port');
+        $data = $event->getParam('payload');
 
+        try {
+            $this->deviceService->ping($serial, $ip, $port);
+            $this->deviceService->handle($serial, $ip, $port, $data);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }

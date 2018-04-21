@@ -13,7 +13,7 @@ class ModuleOptions extends AbstractOptions
     /**
      * @var string
      */
-    private $bindingIp = '0.0.0.0';
+    private $bindingIp = '10.10.10.1';
 
     /**
      * @var integer

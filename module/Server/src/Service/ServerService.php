@@ -70,15 +70,19 @@ class ServerService
     public function run()
     {
         //Create a UDP socket
-        if(!($this->sock = socket_create(AF_INET, SOCK_DGRAM, 0)))
+        if(!($this->sock = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP)))
         {
             $errorcode = socket_last_error();
             $errormsg = socket_strerror($errorcode);
 
             throw new \RuntimeException("Couldn't create socket: [$errorcode] $errormsg");
         }
+
+        //socket_set_option($this->sock, SOL_SOCKET, SO_BROADCAST, 1);
+
+
         // Bind the source address
-        if(!socket_bind($this->sock, $this->moduleOptions->getBindingIp() , $this->moduleOptions->getBindingPort()))
+        if(!socket_bind($this->sock, 0 , $this->moduleOptions->getBindingPort()))
         {
             $errorcode = socket_last_error();
             $errormsg = socket_strerror($errorcode);
@@ -92,7 +96,6 @@ class ServerService
                 //Receive some data
                 $len = socket_recvfrom($this->sock, $buf, 512, 0, $remote_ip, $remote_port);
                 if ($len > 0) {
-                    $this->logger->debug(sprintf("Received %s", $buf));
                     // resolve message and trigger event into bus
                     $this->handle($buf, $remote_ip, $remote_port);
                 }
@@ -115,6 +118,8 @@ class ServerService
         $serialNumber = substr($data, 4,8);
         $payload = substr($data, 12);
 
+        $this->logger->debug(sprintf("Received %s from %s:%s", $command, $ip, $port));
+
         $event = new IncomeEvent();
         $event->setName(sprintf('income.event.%s', $command));
         $event->setParams([
@@ -136,14 +141,8 @@ class ServerService
     {
         $s = null;
         try {
-            if (!($s = socket_create(AF_INET, SOCK_DGRAM, 0))) {
-                $errorcode = socket_last_error();
-                $errormsg = socket_strerror($errorcode);
-                throw new \RuntimeException("Couldn't create socket: [$errorcode] $errormsg");
-            }
-
             //Send the message
-            if (!socket_sendto($s, $data, strlen($data), 0, $ip, $port)) {
+            if (!socket_sendto($this->sock, $data, strlen($data), 0, $ip, $port)) {
                 $errorcode = socket_last_error();
                 $errormsg = socket_strerror($errorcode);
                 throw new \RuntimeException("Could not send data: [$errorcode] $errormsg");
@@ -156,6 +155,4 @@ class ServerService
             }
         }
     }
-
-
 }

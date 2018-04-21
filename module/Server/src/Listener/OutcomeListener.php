@@ -42,6 +42,7 @@ class OutcomeListener extends AbstractListenerAggregate
     public function attach(EventManagerInterface $events)
     {
         $this->listeners[] = $events->attach('outcome.event.'.ServerService::COMMAND_CONF, [$this, 'onOutcomeConf']);
+        $this->listeners[] = $events->attach('outcome.event.'.ServerService::COMMAND_PONG, [$this, 'onOutcomePong']);
     }
 
     /**
@@ -53,8 +54,16 @@ class OutcomeListener extends AbstractListenerAggregate
         $port = $event->getParam('port');
         $data = $event->getParam('data');
 
-        $data = 'CONF'.$data;
+        $data = ServerService::COMMAND_CONF.$data;
 
         $this->serverService->send($ip, $port, $data);
+    }
+
+    public function onOutcomePong(EventInterface $event)
+    {
+        $ip = $event->getParam('ip');
+        $port = $event->getParam('port');
+
+        $this->serverService->send($ip, $port, ServerService::COMMAND_PONG);
     }
 }

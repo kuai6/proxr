@@ -12,6 +12,9 @@ use Application\Command\Relay;
 use Application\Entity\Bank;
 use Application\EntityRepository\Bank as BankEntityRepository;
 use Doctrine\ORM\EntityManager;
+use Server\Event\OutcomeEvent;
+use Server\Service\ServerService;
+use Zend\EventManager\EventManager;
 
 /**
  * Device activity
@@ -62,6 +65,9 @@ class Device extends AbstractActivity
                 \Application\Entity\Device::class, $this->getDeviceVariable()));
         }
 
+        /** @var EventManager $eventManager */
+        $eventManager = $context->getServiceLocator()->get('Application')->getEventManager();
+
         /** @var EntityManager $entityManager */
         $entityManager = $context->getServiceLocator()->get('ApplicationEntityManager');
         /** @var BankEntityRepository $bankRepository */
@@ -85,6 +91,17 @@ class Device extends AbstractActivity
                 if ($this->getAction() === self::ACTION_GET) {
                     $result = $command->status($bank, $this->getBit());
                 }
+                $outcome = new OutcomeEvent();
+                $outcome->setName('outcome.event.'. ServerService::COMMAND_DATA);
+                $outcome->setParams([
+                    'command' => ServerService::COMMAND_DATA,
+                    'ip'    => $device->getId(),
+                    'port'  => $device->getPort(),
+                    'data'  => $result,
+                ]);
+
+                $eventManager->trigger($outcome);
+
                 break;
             case $bank instanceof Bank\ContactClosure:
                 $command = new ContactClosure();

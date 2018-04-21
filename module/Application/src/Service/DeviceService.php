@@ -4,9 +4,12 @@ namespace Application\Service;
 
 use Application\Entity\Bank;
 use Application\Entity\Device;
+use Application\Entity\EventLog;
+use Application\Event\Event;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Zend\EventManager\EventManager;
 
 /**
  * Class DeviceService
@@ -23,6 +26,11 @@ class DeviceService
      * @var EntityManager
      */
     private $entityManager;
+
+    /**
+     * @var EventManager
+     */
+    private $eventManager;
 
     /**
      * @var BankService
@@ -90,8 +98,9 @@ class DeviceService
         $device = new Device();
         $device->setName($serial);
         $device->setIp($ip)
-            ->setPort($port);
-        $device->setStatus($status);
+            ->setPort($port)
+            ->setLastPing(new \DateTime())
+            ->setStatus($status);
 
         $this->save($device);
         $bank->setDevice($device);
@@ -100,9 +109,30 @@ class DeviceService
         return $device;
     }
 
+    /**
+     * @param $serial
+     * @param $ip
+     * @param $port
+     * @return null
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
     public function ping($serial, $ip, $port)
     {
+        /** @var \Application\EntityRepository\Device $deviceRepository */
+        $deviceRepository = $this->entityManager->getRepository(Device::class);
+        /** @var Device $device */
+        $device = $deviceRepository->findOneBy(['name' => $serial]);
+        if(null == $device) {
+            return null;
+        }
 
+        $device->setLastPing(new \DateTime());
+
+        $this->save($device);
+
+        return null;
     }
 
     /**
@@ -118,5 +148,65 @@ class DeviceService
         $this->entityManager->flush($device);
 
         return $device;
+    }
+
+
+    public function handle($serial, $ip, $port, $data)
+    {
+        /** @var \Application\EntityRepository\Device $deviceRepository */
+        $deviceRepository = $this->entityManager->getRepository(Device::class);
+        /** @var Device $device */
+        $device = $deviceRepository->findOneBy(['name' => $serial]);
+        if (null == $device) {
+            return null;
+        }
+
+        $bank = $data{0};
+        $value = substr($data, 1);
+
+        /** @var \Application\EntityRepository\Bank $bankRepository */
+        $bankRepository = $this->entityManager->getRepository(Bank::class);
+        /** @var Bank $bank */
+        $bank = $bankRepository->findOneBy(['name' => $bank]);
+
+        if (null == $bank) {
+            return false;
+        }
+
+        $bankBits = [];
+        for ($i = 0; $i < 8; $i++) {
+            if (!empty($value{$i})) {
+                $bankBits[$i] = $value{$i};
+            }
+        }
+
+        //remove bit direction
+        $bankRepository->saveBitsDBAL($bank->getDevice(), $bank->getName(), $bankBits);
+
+        /** @var \Application\EntityRepository\EventLog $eventLogEntityRepository */
+        $eventLogEntityRepository = $this->entityManager->getRepository(EventLog::class);
+        /** @var EventLog $eventLog */
+        $eventLog = $eventLogEntityRepository->saveLog($bank->getDevice(), $bank->getName(), $bankBits);
+        $event = new Event();
+        switch(true) {
+            case $bank instanceof Bank\Dac:
+                $event->setName(Event::EVENT_ADC);
+                break;
+            case $bank instanceof Bank\ContactClosure:
+                $event->setName(Event::EVENT_CONTACT_CLOSURE);
+                break;
+        }
+
+        $event->setDevice($bank->getDevice())
+            ->setBank($bank->getName())
+            ->setBits($bankBits)
+            ->setEventLog($eventLog);
+        $this->eventManager->trigger($event);
+    }
+
+
+    public function handleContactClosure($device, $data)
+    {
+
     }
 }

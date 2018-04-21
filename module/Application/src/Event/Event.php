@@ -10,6 +10,9 @@ use Application\Entity\EventLog;
 class Event extends AbstractEvent
 {
     const EVENT_CONTACT_CLOSURE = 'event.contactClosure';
+    const EVENT_ADC = 'event.adc';
+
+
 
     /** @var  string */
     protected $name;
