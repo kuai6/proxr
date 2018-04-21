@@ -6,10 +6,12 @@ use Application\Activity\ActivitiesProviderInterface;
 use Application\Activity\ActivityManager;
 use Application\Event\Event;
 use Application\Listener\IncomeListener;
-use Application\Service\Activity;
+use Application\Service\ActivityListener;
 use Zend\Console\Adapter\AdapterInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
+use Zend\ModuleManager\Feature\InitProviderInterface;
 use Zend\ModuleManager\Listener\ServiceListenerInterface;
+use Zend\ModuleManager\ModuleManagerInterface;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 
@@ -17,7 +19,7 @@ use Zend\Mvc\MvcEvent;
  * Class Module
  * @package Application
  */
-class Module implements ConfigProviderInterface
+class Module implements ConfigProviderInterface, InitProviderInterface
 {
     /**
      * @param MvcEvent $e
@@ -28,19 +30,10 @@ class Module implements ConfigProviderInterface
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
 
-        $serviceManager = $e->getApplication()->getServiceManager();
-        /** @var ServiceListenerInterface $serviceListener */
-        $serviceListener = $serviceManager->get('ServiceListener');
-        $serviceListener->addServiceManager(
-            ActivityManager::class,
-            'activities',
-            ActivitiesProviderInterface::class,
-            'getActivitiesConfig'
-        );
         $serviceLocator = $e->getApplication()->getServiceManager();
-        /** @var Activity $activityService */
-        $activityService = $serviceLocator->get(Activity::class);
-        $e->getApplication()->getEventManager()->attach(Event::EVENT_CONTACT_CLOSURE, [$activityService, 'contactClosureEventHandler']);
+        /** @var ActivityListener $activityListener */
+        $activityListener = $serviceLocator->get(ActivityListener::class);
+        $activityListener->attach($eventManager);
         /** @var IncomeListener $incomeListener */
         $incomeListener = $serviceLocator->get(IncomeListener::class);
         $incomeListener->attach($eventManager);
@@ -64,5 +57,24 @@ class Module implements ConfigProviderInterface
             'Shelled Controller',
             'system init' => 'Init system'
         ];
+    }
+
+    /**
+     * Initialize workflow
+     *
+     * @param  ModuleManagerInterface $manager
+     * @return void
+     */
+    public function init(ModuleManagerInterface $manager)
+    {
+        $serviceManager = $manager->getEvent()->getParam('ServiceManager');
+        /** @var ServiceListenerInterface $serviceListener */
+        $serviceListener = $serviceManager->get('ServiceListener');
+        $serviceListener->addServiceManager(
+            ActivityManager::class,
+            'activities',
+            ActivitiesProviderInterface::class,
+            'getActivitiesConfig'
+        );
     }
 }

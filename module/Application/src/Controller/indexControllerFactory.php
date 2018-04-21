@@ -2,16 +2,16 @@
 
 namespace Application\Controller;
 
-use Application\Service\Queue;
+use Application\Service\DeviceService;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class ConsoleControllerFactory
+ * Class indexControllerFactory
  * @package Application\Controller
  */
-class ConsoleControllerFactory implements FactoryInterface
+class indexControllerFactory implements FactoryInterface
 {
 
     /**
@@ -25,13 +25,9 @@ class ConsoleControllerFactory implements FactoryInterface
         if ($serviceLocator instanceof AbstractPluginManager) {
             $serviceLocator = $serviceLocator->getServiceLocator();
         }
+        /** @var DeviceService $deviceService */
+        $deviceService = $serviceLocator->get(DeviceService::class);
 
-        /** @var array $config */
-        $config = $serviceLocator->get('config');
-
-        /** @var Queue $queueService */
-        $queueService = $serviceLocator->get(Queue::class);
-
-        return new ConsoleController($config, $queueService);
+        return new IndexController($deviceService);
     }
 }

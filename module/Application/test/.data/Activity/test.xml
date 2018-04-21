@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<activity event="contactClosure" bit="0" on="up">
+    <trigger>
+        <sequence>
+            <assign name="ContactClosureId" value="6" />
+            <assignFromRepository name="ContactClosureEntity" repository="\Application\Entity\Device" id="ContactClosureId" />
+            <device device="ContactClosureEntity" action="get" bank="0" bit="0" out="ContactClosureBitValue" />
+            <assign name="AliceDACId" value="7" />
+            <assignFromRepository name="AliceDAC" repository="\Application\Entity\Device" id="AliceDACId" />
+            <if variable="ContactClosureBitValue" operand="eq" value="1" type="int">
+                <sequence>
+                    <device device="AliceDAC" action="set" bank="0" bit="0" value="привет, Влад, я смогла!" />
+                </sequence>
+            </if>
+            <if variable="ContactClosureBitValue" operand="eq" value="0" type="int">
+                <sequence>
+                    <assign name="Temp" value="23" />
+                    <sprintf format="Температ+ура в к+омнате %d гр+адуса ц+ельсия">
+                        <arg name="Temp" />
+                    </sprintf>
+
+                    <device device="AliceDAC" action="set" bank="0" bit="0" value="Температ+ура в к+омнате 23 гр+адуса ц+ельсия" />
+                    <device device="AliceDAC" action="set" bank="0" bit="0" value="Ош+ибка. Устр+ойство не н+айдено" />
+                </sequence>
+            </if>
+        </sequence>
+    </trigger>
+</activity>

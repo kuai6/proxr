@@ -97,7 +97,7 @@ class ServerService
                 $len = socket_recvfrom($this->sock, $buf, 512, 0, $remote_ip, $remote_port);
                 if ($len > 0) {
                     // resolve message and trigger event into bus
-                    $this->handle($buf, $remote_ip, $remote_port);
+                    $this->handle(trim($buf), $remote_ip, $remote_port);
                 }
             } catch (\Exception $e) {
                 $this->logger->err(sprintf('%s %s', get_class($e), $e->getMessage()));
@@ -137,10 +137,12 @@ class ServerService
      * @param $port
      * @param $data
      */
-    public function send($ip, $port, $data)
+    public function send($ip, $port, $command, $data)
     {
         $s = null;
         try {
+            $this->logger->debug(sprintf("Sending %s to %s:%s", $command, $ip, $port));
+
             //Send the message
             if (!socket_sendto($this->sock, $data, strlen($data), 0, $ip, $port)) {
                 $errorcode = socket_last_error();

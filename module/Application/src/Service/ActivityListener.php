@@ -6,6 +6,8 @@ use Application\Activity\ActivityManager;
 use Application\Activity\Invoker;
 use Application\Event\Event;
 use Doctrine\ORM\EntityManager;
+use Zend\EventManager\AbstractListenerAggregate;
+use Zend\EventManager\EventManagerInterface;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorAwareTrait;
 
@@ -13,7 +15,7 @@ use Zend\ServiceManager\ServiceLocatorAwareTrait;
  * Class Activity
  * @package Application\Service
  */
-class Activity extends AbstractService
+class ActivityListener extends AbstractListenerAggregate
 {
     /**
      * @var EntityManager
@@ -64,5 +66,20 @@ class Activity extends AbstractService
         }
 
         return true;
+    }
+
+    /**
+     * Attach one or more listeners
+     *
+     * Implementors may add an optional $priority argument; the EventManager
+     * implementation will pass this to the aggregate.
+     *
+     * @param EventManagerInterface $events
+     *
+     * @return void
+     */
+    public function attach(EventManagerInterface $events)
+    {
+        $this->listeners[] = $events->attach(Event::EVENT_CONTACT_CLOSURE,  [$this, 'contactClosureEventHandler']);
     }
 }

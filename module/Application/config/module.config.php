@@ -9,13 +9,14 @@ use Application\Activity\InvokerFactory;
 use Application\Controller\ConsoleController;
 use Application\Controller\ConsoleControllerFactory;
 use Application\Controller\IndexController;
+use Application\Controller\indexControllerFactory;
 use Application\Daemon\ContactClosureDaemon;
 use Application\Daemon\MainDaemon;
 use Application\Daemon\TestDaemon;
 use Application\Daemon\UdpDaemon;
 use Application\Listener\IncomeListener;
 use Application\Listener\IncomeListenerFactory;
-use Application\Service\Activity;
+use Application\Service\ActivityListener;
 use Application\Service\ActivityFactory;
 use Application\Service\BankService;
 use Application\Service\BankServiceFactory;
@@ -28,6 +29,8 @@ use Application\Service\QueueFactory;
 use Application\Service\UdpService;
 use Application\Service\UdpServiceFactory;
 use Kuai6\Queue\ServerFactory;
+use Zend\Mvc\Router\Http\Literal;
+use Zend\Mvc\Router\Http\Method;
 
 return array_merge(
     include 'console.config.php',
@@ -36,15 +39,28 @@ return array_merge(
     'router' => [
         'routes' => [
             'home' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'type' =>  Literal::class,
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
-                        'controller' => 'Application\Controller\Index',
+                        'controller' => IndexController::class,
                         'action'     => 'index',
                     ],
                 ],
             ],
+            'devices-list' => [
+                'type' => Method::class,
+                'options' => [
+                    'verb'     => 'GET',
+                    'route'    => '/rest/v1/devices',
+                    'defaults' => [
+                        'controller' => IndexController::class,
+                        'action'     => 'devices',
+                    ],
+                    'may_terminate' => true,
+                ],
+            ],
+
             // The following is a route to simplify getting started creating
             // new controllers and actions without needing to create a new
             // module. Simply drop new controllers in, and you can access them
@@ -87,7 +103,7 @@ return array_merge(
             ActivityManager::class  => ActivityManagerFactory::class,
 
             /** Services */
-            Activity::class         => ActivityFactory::class,
+            ActivityListener::class         => ActivityFactory::class,
             QueueService::class     => QueueFactory::class,
             Invoker::class          => InvokerFactory::class,
 
@@ -109,25 +125,13 @@ return array_merge(
 
         ],
         'aliases' =>[
-            'ApplicationEntityManager' => 'doctrine.entity_manager.orm_default'
+            'ApplicationEntityManager' => 'doctrine.entitymanager.orm_default'
         ]
     ],
-    'translator' => [
-        'locale' => 'en_US',
-        'translation_file_patterns' => [
-            [
-                'type'     => 'gettext',
-                'base_dir' => __DIR__ . '/../language',
-                'pattern'  => '%s.mo',
-            ],
-        ],
-    ],
     'controllers' => [
-        'invokables' => [
-            'Application\Controller\Index' => IndexController::class,
-        ],
         'factories' => [
-            'Application\Controller\Console' => ConsoleControllerFactory::class,
+            ConsoleController::class => ConsoleControllerFactory::class,
+            IndexController::class   => indexControllerFactory::class,
         ],
     ],
     'view_manager' => [
@@ -144,6 +148,9 @@ return array_merge(
         ],
         'template_path_stack' => [
             __DIR__ . '/../view',
+        ],
+        'strategies' => [
+            'ViewJsonStrategy',
         ],
     ],
 ]);

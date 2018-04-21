@@ -94,7 +94,7 @@ class Bank extends AbstractBank
     protected $bit7 = 0;
 
     /**
-     * @return mixed
+     * @return Device
      */
     public function getDevice()
     {

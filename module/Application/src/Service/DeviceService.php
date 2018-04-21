@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Zend\EventManager\EventManager;
+use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class DeviceService
@@ -28,7 +29,7 @@ class DeviceService
     private $entityManager;
 
     /**
-     * @var EventManager
+     * @var EventManagerInterface
      */
     private $eventManager;
 
@@ -41,10 +42,11 @@ class DeviceService
      * DeviceService constructor.
      * @param EntityManager $entityManager
      */
-    public function __construct(EntityManager $entityManager, BankService $bankService)
+    public function __construct(EntityManager $entityManager, BankService $bankService, EventManagerInterface $eventManager)
     {
         $this->entityManager = $entityManager;
         $this->bankService = $bankService;
+        $this->eventManager = $eventManager;
     }
 
     /**
@@ -104,6 +106,7 @@ class DeviceService
 
         $this->save($device);
         $bank->setDevice($device);
+        $bank->setName(0);
         $this->bankService->save($bank);
         $device->setBanks(new ArrayCollection([$bank]));
         return $device;
@@ -150,14 +153,20 @@ class DeviceService
         return $device;
     }
 
-
+    /**
+     * @param $serial
+     * @param $ip
+     * @param $port
+     * @param $data
+     * @return null
+     */
     public function handle($serial, $ip, $port, $data)
     {
         /** @var \Application\EntityRepository\Device $deviceRepository */
         $deviceRepository = $this->entityManager->getRepository(Device::class);
         /** @var Device $device */
         $device = $deviceRepository->findOneBy(['name' => $serial]);
-        if (null == $device) {
+        if (null === $device) {
             return null;
         }
 
@@ -167,26 +176,23 @@ class DeviceService
         /** @var \Application\EntityRepository\Bank $bankRepository */
         $bankRepository = $this->entityManager->getRepository(Bank::class);
         /** @var Bank $bank */
-        $bank = $bankRepository->findOneBy(['name' => $bank]);
-
-        if (null == $bank) {
-            return false;
+        $bank = $bankRepository->findOneBy(['name' => $bank, 'device' => $device->getId()]);
+        if (null === $bank) {
+            return null;
         }
 
         $bankBits = [];
         for ($i = 0; $i < 8; $i++) {
-            if (!empty($value{$i})) {
-                $bankBits[$i] = $value{$i};
-            }
+            $bankBits[$i] = (!empty($value{$i})) ? $value{$i} : 0;
         }
 
         //remove bit direction
-        $bankRepository->saveBitsDBAL($bank->getDevice(), $bank->getName(), $bankBits);
+        $bankRepository->saveBitsDBAL($bank->getDevice()->getId(), $bank->getName(), $bankBits);
 
         /** @var \Application\EntityRepository\EventLog $eventLogEntityRepository */
         $eventLogEntityRepository = $this->entityManager->getRepository(EventLog::class);
         /** @var EventLog $eventLog */
-        $eventLog = $eventLogEntityRepository->saveLog($bank->getDevice(), $bank->getName(), $bankBits);
+        $eventLog = $eventLogEntityRepository->saveLog($bank->getDevice()->getId(), $bank->getName(), $bankBits);
         $event = new Event();
         switch(true) {
             case $bank instanceof Bank\Dac:
@@ -197,16 +203,24 @@ class DeviceService
                 break;
         }
 
-        $event->setDevice($bank->getDevice())
+        $event->setDevice($bank->getDevice()->getId())
             ->setBank($bank->getName())
             ->setBits($bankBits)
             ->setEventLog($eventLog);
         $this->eventManager->trigger($event);
+
+        return null;
     }
 
-
-    public function handleContactClosure($device, $data)
+    /**
+     * @return array
+     */
+    public function devices()
     {
+        /** @var \Application\EntityRepository\Device $deviceRepository */
+        $deviceRepository = $this->entityManager->getRepository(Device::class);
+
+        return $deviceRepository->findAll();
 
     }
 }

@@ -22,6 +22,12 @@ class Relay extends AbstractCommand
         if ($bank->getName() === null) {
             throw new RuntimeException('Bank name not specified');
         }
+        $setBit = 'setBit' . $bit;
+        if(!method_exists($setBit, $bank)) {
+            throw new RuntimeException(sprintf("Method %s not exist", $setBit));
+        }
+        $bank->{$setBit}(1);
+
         return sprintf("%s%s%s", $bank->getName(), $bit, 1);
     }
 
@@ -30,42 +36,37 @@ class Relay extends AbstractCommand
      * @param int $bit
      * @return bool
      * @throws RuntimeException
-     * @throws \ReflectionException
      */
     public function off(Bank $bank, $bit)
     {
         if ($bank->getName() === null) {
             throw new RuntimeException('Bank name not specified');
         }
-        return sprintf("%s%s%s", $bank->getName(), $bit, 0);
+        $setBit = 'setBit' . $bit;
+        if(!method_exists($setBit, $bank)) {
+            throw new RuntimeException(sprintf('Method %s not exist', $setBit));
+        }
+        $bank->{$setBit}(0);
+
+        return sprintf('%s%s%s', $bank->getName(), $bit, 0);
     }
 
     /**
      * @param Bank $bank
      * @param int $bit
      * @return bool
-     * @throws \RuntimeException
      * @throws RuntimeException
-     * @throws \ReflectionException
      */
     public function toggle(Bank $bank, $bit)
     {
-
         $getBit = 'getBit' . $bit;
-        $setBit = 'setBit' . $bit;
-
         if(!method_exists($getBit, $bank)) {
-            throw new \RuntimeException(sprintf("Method %s not exist", $getBit));
+            throw new RuntimeException(sprintf("Method %s not exist", $getBit));
         }
-
-        if(!method_exists($setBit, $bank)) {
-            throw new \RuntimeException(sprintf("Method %s not exist", $setBit));
-        }
-
-        if ($bank->{$getBit}() == 1) {
+        if ($bank->{$getBit}() === 1) {
             return $this->off($bank, $bit);
         }
-        if ($bank->{$getBit}() == 0) {
+        if ($bank->{$getBit}() === 0) {
             return $this->on($bank, $bit);
         }
 

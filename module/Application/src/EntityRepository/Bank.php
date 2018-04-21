@@ -25,10 +25,10 @@ class Bank extends EntityRepository
         $query->update($this->getClassMetadata()->getTableName(), 'b');
 
         foreach ($bits as $binIndex => $bitValue) {
-            $query->set('b.bit'.$binIndex, $bitValue);
+            $query->set('bit'.$binIndex, $bitValue);
         }
-        $query->where('b.deviceId = :deviceId')
-            ->andWhere('b.name = :bankName')
+        $query->where('deviceId = :deviceId')
+            ->andWhere('name = :bankName')
             ->setParameter('deviceId', $deviceId)
             ->setParameter('bankName', $bankName);
         $query->execute();

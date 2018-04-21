@@ -3,6 +3,7 @@
 namespace Application\Service;
 
 use Doctrine\ORM\EntityManager;
+use Zend\Mvc\Application;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -30,7 +31,10 @@ class DeviceServiceFactory implements FactoryInterface
         $entityManager = $serviceLocator->get('ApplicationEntityManager');
         /** @var BankService $bankService */
         $bankService = $serviceLocator->get(BankService::class);
+        /** @var Application $application */
+        $application = $serviceLocator->get('Application');
 
-        return new DeviceService($entityManager, $bankService);
+
+        return new DeviceService($entityManager, $bankService, $application->getEventManager());
     }
 }

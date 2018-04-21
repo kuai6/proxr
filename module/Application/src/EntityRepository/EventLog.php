@@ -29,7 +29,7 @@ class EventLog extends EntityRepository
             'type' =>  "'eventlog'",
             'bankId' => $bank['id'],
             'deviceId' => $deviceId,
-            'dateTime' => 'sysdate(6)'
+            'dateTime' => 'current_timestamp'
         ];
         foreach ($bits as $binIndex => $bitValue) {
             $values['bit'.$binIndex] = sprintf("'%s'", $bitValue);

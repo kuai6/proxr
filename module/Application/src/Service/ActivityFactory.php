@@ -34,6 +34,6 @@ class ActivityFactory implements FactoryInterface
         /** @var ActivityManager $activityManager */
         $activityManager = $serviceLocator->get(ActivityManager::class);
 
-        return new Activity($entityManager, $activityManager, $activityInvoker);
+        return new ActivityListener($entityManager, $activityManager, $activityInvoker);
     }
 }

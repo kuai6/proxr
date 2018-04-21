@@ -8,6 +8,7 @@ use Application\Activity\ContextTrait;
 use Application\Activity\Exception\RuntimeException;
 use Application\Command\Adapter\Socket;
 use Application\Command\ContactClosure;
+use Application\Command\Dac;
 use Application\Command\Relay;
 use Application\Entity\Bank;
 use Application\EntityRepository\Bank as BankEntityRepository;
@@ -48,6 +49,9 @@ class Device extends AbstractActivity
     /** @var  int */
     protected $value;
 
+    /** @var string */
+    protected $rawValue;
+
     /** @var  string */
     protected $action;
 
@@ -82,34 +86,50 @@ class Device extends AbstractActivity
         switch (true) {
             case $bank instanceof Bank\Relay:
                 $command = new Relay();
-                $command->setAdapter(new Socket());
-                $command->getAdapter()->connect($device->getIp(), $device->getPort());
                 if ($this->getAction() === self::ACTION_SET) {
                     $method = $this->getValue() > 0 ? 'on' : 'off';
                     $result = $command->$method($bank, $this->getBit());
+
+                    $outcome = new OutcomeEvent();
+                    $outcome->setName('outcome.event.'. ServerService::COMMAND_DATA);
+                    $outcome->setParams([
+                        'command' => ServerService::COMMAND_DATA,
+                        'ip'    => $device->getIp(),
+                        'port'  => $device->getPort(),
+                        'data'  => $result,
+                    ]);
+
+                    $eventManager->trigger($outcome);
                 }
                 if ($this->getAction() === self::ACTION_GET) {
-                    $result = $command->status($bank, $this->getBit());
+                    $getter = 'getBit' . $this->getBit();
+                    $result = $bank->{$getter}();
                 }
+
+
+                break;
+            case $bank instanceof Bank\ContactClosure:
+                $command = new ContactClosure();
+                if ($this->getAction() === self::ACTION_GET) {
+                    $getter = 'getBit' . $this->getBit();
+                    $result = $bank->{$getter}();
+                }
+
+                break;
+            case $bank instanceof Bank\Dac:
+                $command = new Dac();
+                $result = $command->set($bank, $this->getBit(), $this->getValue());
+
                 $outcome = new OutcomeEvent();
                 $outcome->setName('outcome.event.'. ServerService::COMMAND_DATA);
                 $outcome->setParams([
                     'command' => ServerService::COMMAND_DATA,
-                    'ip'    => $device->getId(),
+                    'ip'    => $device->getIp(),
                     'port'  => $device->getPort(),
                     'data'  => $result,
                 ]);
 
                 $eventManager->trigger($outcome);
-
-                break;
-            case $bank instanceof Bank\ContactClosure:
-                $command = new ContactClosure();
-                $command->setAdapter(new Socket());
-                $command->getAdapter()->connect($device->getIp(), $device->getPort());
-                if ($this->getAction() === self::ACTION_GET) {
-                    $result = $command->getStatus($bank, $this->getBit());
-                }
                 break;
         }
 
@@ -164,7 +184,8 @@ class Device extends AbstractActivity
         if ($value === '' && $this->getAction() === self::ACTION_SET) {
             throw new RuntimeException('Attribute value must be specified if you use a set action');
         }
-        $this->setValue((int) $value);
+        $this->setValue($value);
+        $this->setRawValue($attributes['rawValue']);
 
         if ($attributes['out']) {
             $this->setOut((string) $attributes['out']);
@@ -222,6 +243,24 @@ class Device extends AbstractActivity
     public function setValue($value)
     {
         $this->value = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRawValue()
+    {
+        return $this->rawValue;
+    }
+
+    /**
+     * @param string $rawValue
+     * @return $this
+     */
+    public function setRawValue($rawValue)
+    {
+        $this->rawValue = $rawValue;
         return $this;
     }
 
