@@ -70,7 +70,7 @@ class Activity extends AbstractActivity
      * Change direction, i.e raise, fall or null
      * @var string
      *
-     * @ORM\Column(name="on", type="string", nullable=true)
+     * @ORM\Column(name="on_event", type="string", nullable=true)
      */
     protected $on;
 

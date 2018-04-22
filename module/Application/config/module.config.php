@@ -18,6 +18,8 @@ use Application\Listener\IncomeListener;
 use Application\Listener\IncomeListenerFactory;
 use Application\Service\ActivityListener;
 use Application\Service\ActivityFactory;
+use Application\Service\ActivityService;
+use Application\Service\ActivityServiceFactory;
 use Application\Service\BankService;
 use Application\Service\BankServiceFactory;
 use Application\Service\ContactClosure as ContactClosureService;
@@ -56,6 +58,19 @@ return array_merge(
                     'defaults' => [
                         'controller' => IndexController::class,
                         'action'     => 'devices',
+                    ],
+                    'may_terminate' => true,
+                ],
+            ],
+
+            'connection' => [
+                'type' => Method::class,
+                'options' => [
+                    'verb'     => 'POST',
+                    'route'    => '/rest/v1/connect',
+                    'defaults' => [
+                        'controller' => IndexController::class,
+                        'action'     => 'connect',
                     ],
                     'may_terminate' => true,
                 ],
@@ -110,6 +125,8 @@ return array_merge(
             DeviceService::class    => DeviceServiceFactory::class,
             BankService::class      => BankServiceFactory::class,
             IncomeListener::class   => IncomeListenerFactory::class,
+
+            ActivityService::class => ActivityServiceFactory::class,
         ],
         'invokables' => [
             /** Daemons */

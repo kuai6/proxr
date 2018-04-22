@@ -7,6 +7,7 @@ use Application\Activity\Context;
 use Application\Activity\ContextTrait;
 use Application\Activity\Exception\RuntimeException;
 use Application\Command\Adapter\Socket;
+use Application\Command\Adc;
 use Application\Command\ContactClosure;
 use Application\Command\Dac;
 use Application\Command\Relay;
@@ -82,12 +83,21 @@ class Device extends AbstractActivity
         if (!$bank) {
             throw new RuntimeException('Bank entity not found');
         }
+        $entityManager->refresh($bank);
         $command = $result = false;
         switch (true) {
             case $bank instanceof Bank\Relay:
                 $command = new Relay();
                 if ($this->getAction() === self::ACTION_SET) {
                     $method = $this->getValue() > 0 ? 'on' : 'off';
+                    $setter = 'setBit' . $this->getBit();
+
+                    $val = $method === 'on' ? 1 : 0;
+                    $bank->{$setter}($val);
+
+                    $entityManager->persist($bank);
+                    $entityManager->flush($bank);
+
                     $result = $command->$method($bank, $this->getBit());
 
                     $outcome = new OutcomeEvent();
@@ -118,7 +128,12 @@ class Device extends AbstractActivity
                 break;
             case $bank instanceof Bank\Dac:
                 $command = new Dac();
-                $result = $command->set($bank, $this->getBit(), $this->getValue());
+                $value = $this->getValue();
+                if($context->has($this->getValue())) {
+                    $value = $context->get($this->getValue());
+                }
+
+                $result = $command->set($bank, $this->getBit(), $value);
 
                 $outcome = new OutcomeEvent();
                 $outcome->setName('outcome.event.'. ServerService::COMMAND_DATA);
@@ -131,6 +146,14 @@ class Device extends AbstractActivity
 
                 $eventManager->trigger($outcome);
                 break;
+            case $bank instanceof Bank\Adc:
+                $command = new Adc();
+                if ($this->getAction() === self::ACTION_GET) {
+                    $getter = 'getBit' . $this->getBit();
+                    $result = $bank->{$getter}();
+                }
+                break;
+
         }
 
         if (!$command) {

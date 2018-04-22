@@ -23,7 +23,7 @@ class Relay extends AbstractCommand
             throw new RuntimeException('Bank name not specified');
         }
         $setBit = 'setBit' . $bit;
-        if(!method_exists($setBit, $bank)) {
+        if(!method_exists($bank, $setBit)) {
             throw new RuntimeException(sprintf("Method %s not exist", $setBit));
         }
         $bank->{$setBit}(1);
@@ -43,7 +43,7 @@ class Relay extends AbstractCommand
             throw new RuntimeException('Bank name not specified');
         }
         $setBit = 'setBit' . $bit;
-        if(!method_exists($setBit, $bank)) {
+        if(!method_exists($bank, $setBit)) {
             throw new RuntimeException(sprintf('Method %s not exist', $setBit));
         }
         $bank->{$setBit}(0);
@@ -60,7 +60,7 @@ class Relay extends AbstractCommand
     public function toggle(Bank $bank, $bit)
     {
         $getBit = 'getBit' . $bit;
-        if(!method_exists($getBit, $bank)) {
+        if(!method_exists($bank, $getBit)) {
             throw new RuntimeException(sprintf("Method %s not exist", $getBit));
         }
         if ($bank->{$getBit}() === 1) {

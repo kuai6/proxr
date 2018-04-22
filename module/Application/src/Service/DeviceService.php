@@ -181,9 +181,14 @@ class DeviceService
             return null;
         }
 
-        $bankBits = [];
-        for ($i = 0; $i < 8; $i++) {
-            $bankBits[$i] = (!empty($value{$i})) ? $value{$i} : 0;
+        if($bank instanceof Bank\Adc) {
+            $bankBits[0] = $value ;
+
+        } else {
+            $bankBits = [];
+            for ($i = 0; $i < 8; $i++) {
+                $bankBits[$i] = (!empty($value{$i})) ? $value{$i} : 0;
+            }
         }
 
         //remove bit direction

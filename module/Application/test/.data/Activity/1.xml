@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<activity event="contactClosure" bit="0" on="up">
+    <trigger>
+        <sequence>
+            <assign name="ContactClosureId" value="3" />
+            <assign name="AliceDACId" value="4" />
+
+            <assignFromRepository name="ContactClosureEntity" repository="\Application\Entity\Device" id="ContactClosureId" />
+            <device device="ContactClosureEntity" action="get" bank="0" bit="0" out="ContactClosureBitValue" />
+            <assignFromRepository name="AliceDAC" repository="\Application\Entity\Device" id="AliceDACId" />
+
+            <if variable="ContactClosureBitValue" operand="eq" value="1" type="int">
+                <sequence>
+                    <device device="AliceDAC" action="set" bank="0" bit="0" value="Наж+ата кн+опка 1" />
+                </sequence>
+            </if>
+        </sequence>
+    </trigger>
+</activity>

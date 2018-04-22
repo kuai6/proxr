@@ -30,6 +30,7 @@ class ActivityManager extends AbstractPluginManager
         'if'                        => Activity\Condition\IfCondition::class,
         'log'                       => Activity\Log::class,
         'sequence'                  => Activity\Sequence::class,
+        'sprintf'                   => Activity\Sprintf::class,
     ];
 
     /**
