@@ -3,9 +3,9 @@
 exec docker run --rm -it \
  -v $PWD:/app \
  -v ~/.ssh:/home/$(id -un)/.ssh \
- -v ~/.composer:$(mktemp) \
+ -v $(mktemp):/home/$(id -un)/.composer \
  -v /etc/passwd:/etc/passwd:ro \
  -v /etc/group:/etc/group:ro \
  --user $(id -u):$(id -g) \
- -e "COMPOSER_HOME=$(mktemp)" \
+ -e "COMPOSER_HOME=~/.composer" \
  composer $@
