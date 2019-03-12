@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 
+if [ ! -d ~/.composer ]
+then
+    mkdir ~/.composer
+fi
+
 exec docker run --rm -it \
  -v $PWD:/app \
  -v ~/.ssh:/home/$(id -un)/.ssh \
- -v $(mktemp):/home/$(id -un)/.composer \
+ -v ~/.composer:/home/$(id -un)/.composer \
  -v /etc/passwd:/etc/passwd:ro \
  -v /etc/group:/etc/group:ro \
  --user $(id -u):$(id -g) \
