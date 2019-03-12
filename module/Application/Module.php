@@ -21,6 +21,8 @@ use Zend\Mvc\MvcEvent;
  */
 class Module implements ConfigProviderInterface, InitProviderInterface
 {
+    public const MODULE_CONFIG_KEY = 'application';
+
     /**
      * @param MvcEvent $e
      */

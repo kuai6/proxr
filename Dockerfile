@@ -29,6 +29,11 @@ RUN docker-php-ext-configure gd \
     &&  docker-php-ext-install gd
 
 
+RUN echo "php_admin_flag[log_errors] = on" >>  /usr/local/etc/php-fpm.d/www.conf
+RUN echo "php_admin_value[error_log] = /proc/self/fd/2" >>  /usr/local/etc/php-fpm.d/www.conf
+RUN echo "catch_workers_output = yes" >>  /usr/local/etc/php-fpm.d/www.conf
+RUN echo "php_admin_value[error_reporting] = E_ALL & ~E_NOTICE" >> /usr/local/etc/php-fpm.d/www.conf
+
 
 
 COPY bin                bin

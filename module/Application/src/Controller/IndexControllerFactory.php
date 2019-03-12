@@ -2,6 +2,7 @@
 
 namespace Application\Controller;
 
+use Application\Options\ModuleOptions;
 use Application\Service\ActivityService;
 use Application\Service\DeviceService;
 use Zend\ServiceManager\AbstractPluginManager;
@@ -12,7 +13,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  * Class indexControllerFactory
  * @package Application\Controller
  */
-class indexControllerFactory implements FactoryInterface
+class IndexControllerFactory implements FactoryInterface
 {
 
     /**
@@ -30,7 +31,9 @@ class indexControllerFactory implements FactoryInterface
         $deviceService = $serviceLocator->get(DeviceService::class);
         /** @var ActivityService $activityService */
         $activityService = $serviceLocator->get(ActivityService::class);
+        /** @var ModuleOptions $moduleOptions */
+        $moduleOptions = $serviceLocator->get(ModuleOptions::class);
 
-        return new IndexController($deviceService, $activityService);
+        return new IndexController($moduleOptions, $deviceService, $activityService);
     }
 }

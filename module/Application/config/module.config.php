@@ -9,13 +9,15 @@ use Application\Activity\InvokerFactory;
 use Application\Controller\ConsoleController;
 use Application\Controller\ConsoleControllerFactory;
 use Application\Controller\IndexController;
-use Application\Controller\indexControllerFactory;
+use Application\Controller\IndexControllerFactory;
 use Application\Daemon\ContactClosureDaemon;
 use Application\Daemon\MainDaemon;
 use Application\Daemon\TestDaemon;
 use Application\Daemon\UdpDaemon;
 use Application\Listener\IncomeListener;
 use Application\Listener\IncomeListenerFactory;
+use Application\Options\ModuleOptions;
+use Application\Options\ModuleOptionsFactory;
 use Application\Service\ActivityListener;
 use Application\Service\ActivityFactory;
 use Application\Service\ActivityService;
@@ -51,7 +53,7 @@ return array_merge(
                 ],
             ],
             'devices-list' => [
-                'type' => Method::class,
+                'type' => Literal::class,
                 'options' => [
                     'verb'     => 'GET',
                     'route'    => '/rest/v1/devices',
@@ -64,7 +66,7 @@ return array_merge(
             ],
 
             'connection' => [
-                'type' => Method::class,
+                'type' => Literal::class,
                 'options' => [
                     'verb'     => 'POST',
                     'route'    => '/rest/v1/connect',
@@ -80,32 +82,32 @@ return array_merge(
             // new controllers and actions without needing to create a new
             // module. Simply drop new controllers in, and you can access them
             // using the path /application/:controller/:action
-            'application' => [
-                'type'    => 'Literal',
-                'options' => [
-                    'route'    => '/application',
-                    'defaults' => [
-                        '__NAMESPACE__' => 'Application\Controller',
-                        'controller'    => 'Index',
-                        'action'        => 'index',
-                    ],
-                ],
-                'may_terminate' => true,
-                'child_routes' => [
-                    'default' => [
-                        'type'    => 'Segment',
-                        'options' => [
-                            'route'    => '/[:controller[/:action]]',
-                            'constraints' => [
-                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                                'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                            ],
-                            'defaults' => [
-                            ],
-                        ],
-                    ],
-                ],
-            ],
+//            'application' => [
+//                'type'    => 'Literal',
+//                'options' => [
+//                    'route'    => '/application',
+//                    'defaults' => [
+//                        '__NAMESPACE__' => 'Application\Controller',
+//                        'controller'    => 'Index',
+//                        'action'        => 'index',
+//                    ],
+//                ],
+//                'may_terminate' => true,
+//                'child_routes' => [
+//                    'default' => [
+//                        'type'    => 'Segment',
+//                        'options' => [
+//                            'route'    => '/[:controller[/:action]]',
+//                            'constraints' => [
+//                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+//                                'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+//                            ],
+//                            'defaults' => [
+//                            ],
+//                        ],
+//                    ],
+//                ],
+//            ],
         ],
     ],
     'service_manager' => [
@@ -127,6 +129,7 @@ return array_merge(
             IncomeListener::class   => IncomeListenerFactory::class,
 
             ActivityService::class => ActivityServiceFactory::class,
+            ModuleOptions::class   => ModuleOptionsFactory::class,
         ],
         'invokables' => [
             /** Daemons */
@@ -148,7 +151,7 @@ return array_merge(
     'controllers' => [
         'factories' => [
             ConsoleController::class => ConsoleControllerFactory::class,
-            IndexController::class   => indexControllerFactory::class,
+            IndexController::class   => IndexControllerFactory::class,
         ],
     ],
     'view_manager' => [
@@ -169,5 +172,8 @@ return array_merge(
         'strategies' => [
             'ViewJsonStrategy',
         ],
+    ],
+    'application' => [
+        'modulePath' => __DIR__ .'/../',
     ],
 ]);

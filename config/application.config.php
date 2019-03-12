@@ -1,4 +1,7 @@
 <?php
+
+define("API_HOST", getenv('SWAGGER_UI_HOST') ?: "localhost");
+
 /**
  * If you need an environment-specific system or application configuration,
  * there is an example in the documentation

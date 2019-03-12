@@ -3,18 +3,29 @@
 namespace Application\Controller;
 
 use Application\Hydrator\Rest\DeviceHydrator;
+use Application\Options\ModuleOptions;
 use Application\Service\ActivityService;
 use Application\Service\DeviceService;
-use Doctrine\Common\Util\Debug;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
+use OpenApi\Annotations as OA;
 
 /**
+ *
+ * @OA\Info(title="Shelled Controller", version="0.1")
+ * @OA\Server(url=API_HOST)
+ *
  * Class IndexController
  * @package Application\Controller
  */
 class IndexController extends AbstractActionController
 {
+
+    /**
+     * @var ModuleOptions
+     */
+    private $moduleOptions;
+
     /**
      * @var DeviceService
      */
@@ -27,21 +38,52 @@ class IndexController extends AbstractActionController
 
     /**
      * IndexController constructor.
+     * @param ModuleOptions $moduleOptions
      * @param DeviceService $deviceService
      * @param ActivityService $activityService
      */
-    public function __construct(DeviceService $deviceService, ActivityService $activityService)
+    public function __construct(
+        ModuleOptions $moduleOptions,
+        DeviceService $deviceService,
+        ActivityService $activityService)
     {
+        $this->moduleOptions = $moduleOptions;
         $this->deviceService = $deviceService;
         $this->activityService = $activityService;
     }
 
-
+    /**
+     * @return mixed|\Zend\View\Model\ViewModel
+     */
     public function indexAction()
     {
-        return new JsonModel([]);
+        $openapi = \OpenApi\scan($this->moduleOptions->getModulePath());
+
+        return new JsonModel(json_decode($openapi->toJson(), true));
     }
 
+    /**
+     * Fetch devices list
+     *
+     * @OA\Schema(
+     *   schema="Device",
+     *   @OA\Property(property="id", type="integer", description="device id"),
+     *   @OA\Property(property="numberOfPins", type="integer", description="")
+     * )
+     *
+     *
+     * @OA\Get(
+     *     path="/rest/api/v1/",
+     *     @OA\Response(response="200", description="Fetch Devices list",
+     *          @OA\JsonContent(
+     *              type="array",
+     *              @OA\Items(ref="#/components/schemas/Device")
+     *          )
+     *     )
+     * )
+     *
+     * @return JsonModel
+     */
     public function devicesAction()
     {
         $devices = $this->deviceService->devices();
