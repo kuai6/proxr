@@ -14,7 +14,8 @@
     "doctrine/orm": "~2.6.0",
     "doctrine/migrations": "~1.8.0",
     "doctrine/doctrine-orm-module" : "~1.1.0",
-    "zendframework/zendframework": "^2.5"
+    "zendframework/zendframework": "^2.5",
+    "zircote/swagger-php": "^3.0"
   },
   "require-dev": {
     "zendframework/zftool": "*",
