@@ -1,18 +1,19 @@
 {
-  "name": "ProxR Application",
-  "description": "",
+  "name": "kuai6/proxr",
+  "description": "The ProxR Controller",
   "license": "",
   "keywords": [],
   "require": {
-    "php": ">=5.5",
+    "php": "~7.2.0",
     "ext-pcntl": "*",
     "ext-posix" : "*",
     "ext-shmop" : "*",
     "ext-sockets": "*",
+    "ext-amqp": "*",
     "kuai6/queue": "dev-master",
-    "doctrine/orm": "*",
-    "doctrine/migrations": "*",
-    "doctrine/doctrine-orm-module" : "*",
+    "doctrine/orm": "~2.6.0",
+    "doctrine/migrations": "~1.8.0",
+    "doctrine/doctrine-orm-module" : "~1.1.0",
     "zendframework/zendframework": "^2.5"
   },
   "require-dev": {

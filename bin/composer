@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+exec docker run --rm -it \
+ -v $PWD:/app \
+ -v ~/.ssh:/home/$(id -un)/.ssh \
+ -v ~/.composer:$(mktemp) \
+ -v /etc/passwd:/etc/passwd:ro \
+ -v /etc/group:/etc/group:ro \
+ --user $(id -u):$(id -g) \
+ -e "COMPOSER_HOME=$(mktemp)" \
+ composer $@

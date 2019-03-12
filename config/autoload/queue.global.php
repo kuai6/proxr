@@ -3,11 +3,11 @@
 return [
     'queue' => [
         'connection' => [
-            'hostname'  => 'localhost',
-            'port'      => 5672,
-            'username'  => 'developer',
-            'password'  => 'developer',
-            'vhost'     => 'proxr'
+            'hostname'  => getenv('RABBITMQ_HOST') ?: 'localhost',
+            'port'      => getenv('RABBITMQ_PORT') ?: 5672,
+            'username'  => getenv('RABBITMQ_USER') ?: 'quest',
+            'password'  => getenv('RABBITMQ_PASSWORD') ?: 'quest',
+            'vhost'     => getenv('RABBITMQ_VHOST') ?: '/'
         ],
 
         /**
