@@ -68,7 +68,10 @@ class IndexController extends AbstractActionController
      * @OA\Schema(
      *   schema="Device",
      *   @OA\Property(property="id", type="integer", description="device id"),
-     *   @OA\Property(property="numberOfPins", type="integer", description="")
+     *   @OA\Property(property="numberOfPins", type="integer", description="number of pins"),
+     *   @OA\Property(property="serialNumber", type="string", description="serial number"),
+     *   @OA\Property(property="label", type="string", description="label"),
+     *   @OA\Property(property="type", type="string", description="device type")
      * )
      *
      *
