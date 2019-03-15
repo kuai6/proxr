@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity
  *
- * Class PeripheryTyper
+ * Class PeripheryType
  * @package Application\Entity\Periphery
  */
 class PeripheryType
