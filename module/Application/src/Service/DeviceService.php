@@ -200,7 +200,7 @@ class DeviceService
         $eventLog = $eventLogEntityRepository->saveLog($bank->getDevice()->getId(), $bank->getName(), $bankBits);
         $event = new Event();
         switch(true) {
-            case $bank instanceof Bank\Dac:
+            case $bank instanceof Bank\Adc:
                 $event->setName(Event::EVENT_ADC);
                 break;
             case $bank instanceof Bank\ContactClosure:
