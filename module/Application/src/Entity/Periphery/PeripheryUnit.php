@@ -26,6 +26,16 @@ class PeripheryUnit
     private $id;
 
     /**
+     * @ORM\Column(name="name", type="string")
+     */
+    private $name;
+
+    /**
+     * @ORM\Column(name="description", type="string")
+     */
+    private $description;
+
+    /**
      * Periphery type
      * @var PeripheryType
      *
