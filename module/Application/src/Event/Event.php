@@ -23,7 +23,7 @@ class Event extends AbstractEvent
     /** @var  int */
     protected $bank;
 
-    /** @var  int */
+    /** @var  mixed */
     protected $bits;
 
     /** @var  string */
@@ -95,7 +95,7 @@ class Event extends AbstractEvent
     }
 
     /**
-     * @param int $bits
+     * @param mixed $bits
      * @return Event
      */
     public function setBits($bits)

@@ -184,20 +184,51 @@ class DeviceService
             return null;
         }
 
-        $bank = $data{0};
-        $value = substr($data, 1);
-
-        /** @var \Application\EntityRepository\Bank $bankRepository */
-        $bankRepository = $this->entityManager->getRepository(Bank::class);
-        /** @var Bank $bank */
-        $bank = $bankRepository->findOneBy(['name' => $bank, 'device' => $device->getId()]);
-        if (null === $bank) {
+        $banksCount = ord($data{0});
+        if ($banksCount == 0) {
             return null;
         }
+        /** @var \Application\EntityRepository\Bank $bankRepository */
+        $bankRepository = $this->entityManager->getRepository(Bank::class);
+        $pos = 2;
+        do {
+            $bankId = ord(substr($data, $pos, 1 ));
 
+            /** @var Bank $bank */
+            $bank = $bankRepository->findOneBy(['name' => $bankId, 'device' => $device->getId()]);
+            if (null === $bank) {
+                return null;
+            }
+
+            $bitLength = 1;
+            if ($bank instanceof Bank\Adc || $bank instanceof Bank\Dac) {
+                $bitLength = 2;
+            }
+
+            $dLen = $bank->getAvailableBitsCount() * $bitLength;
+
+            $this->handleBank($device, $bank, strpos($data, $pos+1, $dLen ));
+            $pos = $pos + 1 + $dLen;
+            $banksCount--;
+        } while($banksCount > 0);
+
+        return null;
+    }
+
+
+    private function handleBank(Device $device, Bank $bank, $data)
+    {
+        /** @var \Application\EntityRepository\Bank $bankRepository */
+        $bankRepository = $this->entityManager->getRepository(Bank::class);
+
+        $bankBits = [];
         if($bank instanceof Bank\Adc) {
-            $bankBits[0] = $value ;
 
+            $bits = str_split($data, $bank->getAvailableBitsCount()*2);
+
+            for ($i = 0; $i < sizeof($bits); $i ++ ) {
+                $bankBits[$i] = ord($bits[$i]) ;
+            }
         } else {
             $bankBits = [];
             for ($i = 0; $i < 8; $i++) {
@@ -227,8 +258,6 @@ class DeviceService
             ->setBits($bankBits)
             ->setEventLog($eventLog);
         $this->eventManager->trigger($event);
-
-        return null;
     }
 
     /**
