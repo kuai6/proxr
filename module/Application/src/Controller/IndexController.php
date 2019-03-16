@@ -3,7 +3,9 @@
 namespace Application\Controller;
 
 use Application\Entity\Periphery\PeripheryType;
+use Application\Entity\Periphery\PeripheryUnit;
 use Application\Hydrator\Rest\DeviceHydrator;
+use Application\Hydrator\Rest\PeripheryExtractor;
 use Application\Hydrator\Rest\PeripheryTypeMapper;
 use Application\Options\ModuleOptions;
 use Application\Service\ActivityService;
@@ -210,8 +212,22 @@ class IndexController extends AbstractActionController
      *     )
      * )
      */
-    public function connectPeriphery()
-    {}
+    public function connectPeripheryAction()
+    {
+        $device_id = $this->getEvent()->getRouteMatch()->getParam("device_id");
+        $periphery_type = $this->getEvent()->getRouteMatch()->getParam("periphery_type");
+
+//        $extractor = new PeripheryExtractor();
+//        $periphery = $this->peripheryService->registerUnit($device_id, $periphery_type);
+//        return new JsonModel($extractor->extract($periphery));
+        return new JsonModel([
+            'id' => 0,
+            'type_id' => $periphery_type,
+            'device_id' => $device_id,
+            'bank_id' => 0,
+            'bit' => 0
+        ]);
+    }
 
     /**
      * Create activity

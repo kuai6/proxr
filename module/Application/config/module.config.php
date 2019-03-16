@@ -38,6 +38,7 @@ use Application\Service\PeripheryServiceFactory;
 use Application\Listener\RenderListenerFactory;
 use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Method;
+use Zend\Mvc\Router\Http\Segment;
 
 return array_merge(
     include 'console.config.php',
@@ -55,7 +56,7 @@ return array_merge(
                     ],
                 ],
             ],
-            'devices-list' => [
+            'devices' => [
                 'type' => Literal::class,
                 'options' => [
                     'verb'     => 'GET',
@@ -65,6 +66,22 @@ return array_merge(
                         'action'     => 'devices',
                     ],
                     'may_terminate' => true,
+                    'child_routes' => [
+                        'periphery' => [
+                            'type' => Segment::class,
+                            'options' => [
+                                'route' => '/:device_id/:periphery_type',
+                                'constraints' => [
+                                    'device_id'=> '[a-zA-Z][a-zA-Z0-9_-]*',
+                                    'periphery_type'=> '[a-zA-Z][a-zA-Z0-9_-]*'
+                                ],
+                                'defaults' => [
+                                    'controller' => IndexController::class,
+                                    'action'     => 'connectPeriphery',
+                                ]
+                            ]
+                        ]
+                    ]
                 ],
             ],
             'periphery' => [

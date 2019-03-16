@@ -2,6 +2,7 @@
 
 namespace Application\Service;
 
+use Application\Entity\Periphery\PeripheryUnit;
 use Doctrine\ORM\EntityManager;
 use Application\Entity\Periphery\PeripheryType;
 
@@ -53,6 +54,15 @@ class PeripheryService
         $this->entityManager->persist($newType);
         $this->entityManager->flush($newType);
         return $newType;
+    }
+
+    /**
+     * @param $device_id
+     * @param $periphery_type
+     * @return PeripheryUnit
+     */
+    public function registerUnit($device_id, $periphery_type)
+    {
     }
 
 }

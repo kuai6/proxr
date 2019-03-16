@@ -77,11 +77,27 @@ class PeripheryUnit
     }
 
     /**
+     * @param PeripheryType $type
+     */
+    public function setType(PeripheryType $type): void
+    {
+        $this->type = $type;
+    }
+
+    /**
      * @return Device
      */
     public function getDevice(): Device
     {
         return $this->device;
+    }
+
+    /**
+     * @param Device $device
+     */
+    public function setDevice(Device $device): void
+    {
+        $this->device = $device;
     }
 
     /**
@@ -93,11 +109,27 @@ class PeripheryUnit
     }
 
     /**
+     * @param Bank $bank
+     */
+    public function setBank(Bank $bank): void
+    {
+        $this->bank = $bank;
+    }
+
+    /**
      * @return int
      */
     public function getBit(): int
     {
         return $this->bit;
+    }
+
+    /**
+     * @param int $bit
+     */
+    public function setBit(int $bit): void
+    {
+        $this->bit = $bit;
     }
 
 }
