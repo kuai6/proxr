@@ -40,6 +40,30 @@ class PeripheryType
     private $description;
 
     /**
+     * Icon path
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $icon;
+
+    /**
+     * Inputs count
+     * @var integer
+     *
+     * @ORM\Column(type="integer")
+     */
+    private $inputs;
+
+    /**
+     * Outputs count
+     * @var integer
+     *
+     * @ORM\Column(type="integer")
+     */
+    private $outputs;
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -77,5 +101,53 @@ class PeripheryType
     public function setDescription(string $description): void
     {
         $this->description = $description;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIcon(): string
+    {
+        return $this->icon;
+    }
+
+    /**
+     * @param string $icon
+     */
+    public function setIcon(string $icon): void
+    {
+        $this->icon = $icon;
+    }
+
+    /**
+     * @return int
+     */
+    public function getInputs(): int
+    {
+        return $this->inputs;
+    }
+
+    /**
+     * @param int $inputs
+     */
+    public function setInputs(int $inputs): void
+    {
+        $this->inputs = $inputs;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOutputs(): int
+    {
+        return $this->outputs;
+    }
+
+    /**
+     * @param int $outputs
+     */
+    public function setOutputs(int $outputs): void
+    {
+        $this->outputs = $outputs;
     }
 }
