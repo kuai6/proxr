@@ -64,6 +64,15 @@ class PeripheryType
     private $outputs;
 
     /**
+     * The bank type
+     *
+     * @var string
+     *
+     * @ORM\Column(type="string")
+     */
+    private $bankType;
+
+    /**
      * @return int
      */
     public function getId(): int
