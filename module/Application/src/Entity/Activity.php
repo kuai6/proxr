@@ -16,6 +16,22 @@ class Activity extends AbstractActivity
     const ACTIVITY_BIT_FALL     = 'fall';
 
     /**
+     * Name
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string")
+     */
+    protected $name;
+
+    /**
+     * Description
+     * @var string
+     *
+     * @ORM\Column(name="description", type="string", nullable=true)
+     */
+    protected $description;
+
+    /**
      * Status
      * @var Status\Activity
      *
@@ -75,6 +91,22 @@ class Activity extends AbstractActivity
     protected $on;
 
     /**
+     * Actions graph nodes raw json
+     * @var string
+     *
+     * @ORM\Column(name="nodes", type="string")
+     */
+    protected $nodes;
+
+    /**
+     * Actions graph links raw json
+     * @var string
+     *
+     * @ORM\Column(type="string", type="string")
+     */
+    protected $links;
+
+    /**
      * @return Status\Activity
      */
     public function getStatus()
@@ -90,6 +122,70 @@ class Activity extends AbstractActivity
     {
         $this->status = $status;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNodes(): string
+    {
+        return $this->nodes;
+    }
+
+    /**
+     * @param string $nodes
+     */
+    public function setNodes(string $nodes): void
+    {
+        $this->nodes = $nodes;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLinks(): string
+    {
+        return $this->links;
+    }
+
+    /**
+     * @param string $links
+     */
+    public function setLinks(string $links): void
+    {
+        $this->links = $links;
     }
 
     /**

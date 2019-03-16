@@ -65,4 +65,13 @@ class ActivityService
         $this->entityManager->persist($activity);
         $this->entityManager->flush($activity);
     }
+
+    /**
+     * @return array
+     */
+    public function list()
+    {
+        $repository = $this->entityManager->getRepository(Activity::class);
+        return $repository->findAll();
+    }
 }

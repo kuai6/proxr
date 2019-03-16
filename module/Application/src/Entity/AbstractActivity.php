@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 class AbstractActivity
 {
     /**
-     * Bank Id
+     * Activity Id
      * @var integer
      *
      * @ORM\Id()

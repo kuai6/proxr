@@ -2,18 +2,15 @@
 
 namespace Application\Controller;
 
-use Application\Options\ModuleOptions;
+use Application\Hydrator\Rest\PeripheryExtractor;
+use Application\Hydrator\Rest\PeripheryTypeMapper;
+use Application\Service\PeripheryService;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-/**
- * Class indexControllerFactory
- * @package Application\Controller
- */
-class IndexControllerFactory implements FactoryInterface
+class PeripheryControllerFactory implements FactoryInterface
 {
-
     /**
      * Create service
      *
@@ -25,9 +22,11 @@ class IndexControllerFactory implements FactoryInterface
         if ($serviceLocator instanceof AbstractPluginManager) {
             $serviceLocator = $serviceLocator->getServiceLocator();
         }
-        /** @var ModuleOptions $moduleOptions */
-        $moduleOptions = $serviceLocator->get(ModuleOptions::class);
 
-        return new IndexController($moduleOptions);
+        /** @var PeripheryService $peripheryService */
+        $peripheryService = $serviceLocator->get(PeripheryService::class);
+
+        return new PeripheryController($peripheryService, new PeripheryTypeMapper(),
+            new PeripheryExtractor());
     }
 }

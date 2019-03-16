@@ -23,46 +23,34 @@ class PeripheryService
         $this->entityManager = $entityManager;
     }
 
-    /**
-     * @return array|object[]
-     */
-    public function listTypes()
+    public function listTypes(): array
     {
         $typesRepo = $this->entityManager->getRepository(PeripheryType::class);
         return $typesRepo->findAll();
     }
 
-    /**
-     * @param $peripheryType
-     * @return PeripheryType
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     */
-    public function createType($peripheryType)
+    public function createType(PeripheryType $peripheryType): PeripheryType
     {
-        return $this->save($peripheryType);
+        return $this->saveType($peripheryType);
     }
 
-    /**
-     * @param PeripheryType $newType
-     * @return PeripheryType
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     */
-    private function save(PeripheryType $newType)
+    private function saveType(PeripheryType $newType): PeripheryType
     {
         $this->entityManager->persist($newType);
         $this->entityManager->flush($newType);
         return $newType;
     }
 
-    /**
-     * @param $device_id
-     * @param $periphery_type
-     * @return PeripheryUnit
-     */
-    public function registerUnit($device_id, $periphery_type)
+    public function listAllUnits(): array
     {
+        $typesRepo = $this->entityManager->getRepository(PeripheryUnit::class);
+        return $typesRepo->findAll();
     }
 
+    public function listDeviceUnits(): array
+    {}
+
+    public function registerUnit(string $device_id, string $periphery_type): PeripheryUnit
+    {
+    }
 }

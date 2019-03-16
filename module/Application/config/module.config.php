@@ -8,8 +8,12 @@ use Application\Activity\Invoker;
 use Application\Activity\InvokerFactory;
 use Application\Controller\ConsoleController;
 use Application\Controller\ConsoleControllerFactory;
+use Application\Controller\DeviceController;
+use Application\Controller\DeviceControllerFactory;
 use Application\Controller\IndexController;
 use Application\Controller\IndexControllerFactory;
+use Application\Controller\PeripheryController;
+use Application\Controller\PeripheryControllerFactory;
 use Application\Daemon\ContactClosureDaemon;
 use Application\Daemon\MainDaemon;
 use Application\Daemon\TestDaemon;
@@ -62,8 +66,8 @@ return array_merge(
                     'verb'     => 'GET',
                     'route'    => '/rest/v1/devices',
                     'defaults' => [
-                        'controller' => IndexController::class,
-                        'action'     => 'devices',
+                        'controller' => DeviceController::class,
+                        'action'     => 'listDevices',
                     ],
                     'may_terminate' => true
                 ],
@@ -71,18 +75,48 @@ return array_merge(
             'device-periphery' => [
                 'type' => Segment::class,
                 'options' => [
-                    'verb' => "POST",
                     'route' => '/rest/v1/devices/:device_id/periphery/:periphery_type',
-                    'defaults' => [
-                        'controller' => IndexController::class,
-                        'action'     => 'connectPeriphery',
+                    'may_terminate' => true,
+                    'child_routes' => [
+                        'list-periphery' => [
+                            'type' => Method::class,
+                            'options' => [
+                                'verb' => 'GET',
+                                'defaults' => [
+                                    'controller' => PeripheryController::class,
+                                    'action' => 'listDevicePeriphery'
+                                ]
+                            ]
+                        ],
+                        'connect-periphery' => [
+                            'type' => Method::class,
+                            'options' => [
+                                'verb' => 'POST',
+                                'defaults' => [
+                                    'controller' => PeripheryController::class,
+                                    'action'     => 'connectDevicePeriphery',
+                                ]
+                            ]
+                        ]
                     ]
                 ]
             ],
-            'periphery' => [
+            'all-periphery' => [
                 'type' => Literal::class,
                 'options' => [
-                    'route'    => '/rest/v1/periphery'
+                    'route'    => '/rest/v1/periphery',
+                    'verb' => 'GET',
+                    'defaults' => [
+                        'controller' => PeripheryController::class,
+                        'action'     => 'listAllPeriphery',
+                    ]
+                ],
+                'may_terminate' => true,
+            ],
+            'periphery-types' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route'    => '/rest/v1/periphery/types'
                 ],
                 'may_terminate' => false,
                 'child_routes' => [
@@ -91,7 +125,7 @@ return array_merge(
                         'options' => [
                             'verb' => 'GET',
                             'defaults' => [
-                                'controller' => IndexController::class,
+                                'controller' => PeripheryController::class,
                                 'action'     => 'listPeripheryTypes',
                             ]
                         ]
@@ -101,56 +135,13 @@ return array_merge(
                         'options' => [
                             'verb' => 'POST',
                             'defaults' => [
-                                'controller' => IndexController::class,
+                                'controller' => PeripheryController::class,
                                 'action'     => 'registerPeripheryType',
                             ]
                         ]
                     ]
                 ]
             ],
-            'connection' => [
-                'type' => Literal::class,
-                'options' => [
-                    'verb'     => 'POST',
-                    'route'    => '/rest/v1/connect',
-                    'defaults' => [
-                        'controller' => IndexController::class,
-                        'action'     => 'connect',
-                    ],
-                    'may_terminate' => true,
-                ],
-            ],
-
-            // The following is a route to simplify getting started creating
-            // new controllers and actions without needing to create a new
-            // module. Simply drop new controllers in, and you can access them
-            // using the path /application/:controller/:action
-//            'application' => [
-//                'type'    => 'Literal',
-//                'options' => [
-//                    'route'    => '/application',
-//                    'defaults' => [
-//                        '__NAMESPACE__' => 'Application\Controller',
-//                        'controller'    => 'Index',
-//                        'action'        => 'index',
-//                    ],
-//                ],
-//                'may_terminate' => true,
-//                'child_routes' => [
-//                    'default' => [
-//                        'type'    => 'Segment',
-//                        'options' => [
-//                            'route'    => '/[:controller[/:action]]',
-//                            'constraints' => [
-//                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-//                                'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-//                            ],
-//                            'defaults' => [
-//                            ],
-//                        ],
-//                    ],
-//                ],
-//            ],
         ],
     ],
     'service_manager' => [
@@ -197,6 +188,9 @@ return array_merge(
         'factories' => [
             ConsoleController::class => ConsoleControllerFactory::class,
             IndexController::class   => IndexControllerFactory::class,
+            DeviceController::class   => DeviceControllerFactory::class,
+            PeripheryController::class => PeripheryControllerFactory::class,
+            ActivityService::class => ActivityServiceFactory::class
         ],
     ],
     'view_manager' => [

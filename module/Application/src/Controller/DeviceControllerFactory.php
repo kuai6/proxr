@@ -2,32 +2,29 @@
 
 namespace Application\Controller;
 
-use Application\Options\ModuleOptions;
+use Application\Hydrator\Rest\DeviceHydrator;
+use Application\Service\DeviceService;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-/**
- * Class indexControllerFactory
- * @package Application\Controller
- */
-class IndexControllerFactory implements FactoryInterface
+class DeviceControllerFactory implements FactoryInterface
 {
-
     /**
      * Create service
      *
      * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @return DeviceController
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         if ($serviceLocator instanceof AbstractPluginManager) {
             $serviceLocator = $serviceLocator->getServiceLocator();
         }
-        /** @var ModuleOptions $moduleOptions */
-        $moduleOptions = $serviceLocator->get(ModuleOptions::class);
 
-        return new IndexController($moduleOptions);
+        /** @var $deviceService DeviceService */
+        $deviceService = $serviceLocator->get(DeviceService::class);
+
+        return new DeviceController($deviceService, new DeviceHydrator());
     }
 }
