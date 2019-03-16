@@ -1,9 +1,11 @@
 <?php
 
 namespace Server;
+use Application\Listener\RenderListener;
 use Server\Listener\OutcomeListener;
 use Zend\Console\Adapter\AdapterInterface;
 use Zend\EventManager\EventInterface;
+use Zend\Log\Logger;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\ConsoleUsageProviderInterface;
 use Zend\ModuleManager\Feature\ControllerProviderInterface;
@@ -92,8 +94,7 @@ class Module implements
     /**
      * Listen to the bootstrap event
      *
-     * @param EventInterface $e
-     * @return array
+     * @param MvcEvent $e
      */
     public function onBootstrap(MvcEvent $e)
     {
@@ -102,5 +103,15 @@ class Module implements
         /** @var OutcomeListener $incomeListener */
         $incomeListener = $serviceLocator->get(OutcomeListener::class);
         $incomeListener->attach($eventManager);
+
+
+        /** @var RenderListener $renderListener */
+        $renderListener = $serviceLocator->get(RenderListener::class);
+        $renderListener->attach($eventManager);
+
+        /** @var Logger $logger */
+        $logger = $serviceLocator->get('logger');
+        Logger::registerErrorHandler($logger);
+        Logger::registerExceptionHandler($logger);
     }
 }

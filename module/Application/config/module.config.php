@@ -16,6 +16,7 @@ use Application\Daemon\TestDaemon;
 use Application\Daemon\UdpDaemon;
 use Application\Listener\IncomeListener;
 use Application\Listener\IncomeListenerFactory;
+use Application\Listener\RenderListener;
 use Application\Options\ModuleOptions;
 use Application\Options\ModuleOptionsFactory;
 use Application\Service\ActivityListener;
@@ -34,7 +35,7 @@ use Application\Service\UdpService;
 use Application\Service\UdpServiceFactory;
 use Application\Service\PeripheryService;
 use Application\Service\PeripheryServiceFactory;
-use Kuai6\Queue\ServerFactory;
+use Application\Listener\RenderListenerFactory;
 use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Method;
 
@@ -158,6 +159,7 @@ return array_merge(
             BankService::class      => BankServiceFactory::class,
             PeripheryService::class => PeripheryServiceFactory::class,
             IncomeListener::class   => IncomeListenerFactory::class,
+            RenderListener::class   => RenderListenerFactory::class,
 
             ActivityService::class => ActivityServiceFactory::class,
             ModuleOptions::class   => ModuleOptionsFactory::class,
