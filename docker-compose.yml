@@ -3,7 +3,7 @@ services:
   fpm:
     build: .
     ports:
-      - "80:80"
+      - "9999:9999"
     volumes:
       - ./:/srv/www:rw
     environment:
