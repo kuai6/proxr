@@ -2,23 +2,36 @@ version: '3.5'
 services:
   fpm:
     build: .
-    ports:
-      - "9999:9999/udp"
     volumes:
       - ./:/srv/www:rw
     environment:
       POSTGRESQL_HOST: postgres.svc.local
       RABBITMQ_HOST: rabbitmq.svc.local
-      XDEBUG_ENABLE: 1
-      XDEBUG_CONFIG: ide_key=kuai6 remote_host=172.25.212.20 remote_port=9012
+      XDEBUG_ENABLE: 0
+      DO_MIGRATIONS: "true"
     depends_on:
-      - rabbitmq
       - postgres
-
     networks:
       local:
         aliases:
           - fpm.svc.local
+
+  supervisor:
+    build: .
+    ports:
+      - "9999:9999/udp"
+    volumes:
+      - ./:/srv/www:rw
+      - ./etc/supervisor:/etc/supervisor
+    environment:
+      POSTGRESQL_HOST: postgres.svc.local
+    depends_on:
+      - fpm
+    command: ["supervisord", "--nodaemon", "--configuration", "/etc/supervisor/supervisor.conf"]
+    networks:
+      local:
+        aliases:
+          - supervisor.svc.local
   nginx:
     image: nginx
     volumes:
@@ -46,19 +59,13 @@ services:
       POSTGRES_PASSWORD: developer
       POSTGRES_USER: developer
       POSTGRES_DB: proxr
+    volumes:
+      - /var/lib/proxr-postgres-data:/var/lib/postgresql/data
     networks:
       local:
         aliases:
           - postgres.svc.local
 
-  rabbitmq:
-    image: rabbitmq:3.7.2-management
-#    ports:
-#      - "15672:15672"
-    networks:
-      local:
-        aliases:
-          - rabbit.svc.local
 networks:
   local:
     external:

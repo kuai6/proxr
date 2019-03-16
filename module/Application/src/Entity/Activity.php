@@ -33,10 +33,9 @@ class Activity extends AbstractActivity
 
     /**
      * Status
-     * @var Status\Activity
+     * @var string
      *
-     * @ORM\ManyToOne(targetEntity="\Application\Entity\Status\Activity", fetch="LAZY")
-     * @ORM\JoinColumn(name="statusId", referencedColumnName="id", nullable=false)
+     * @ORM\Column(name="status", type="string", nullable=false)
      */
     protected $status;
 
@@ -107,7 +106,7 @@ class Activity extends AbstractActivity
     protected $links;
 
     /**
-     * @return Status\Activity
+     * @return string
      */
     public function getStatus()
     {
@@ -115,7 +114,7 @@ class Activity extends AbstractActivity
     }
 
     /**
-     * @param Status\Activity $status
+     * @param string $status
      * @return Activity
      */
     public function setStatus($status)

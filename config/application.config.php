@@ -13,7 +13,7 @@ return [
     'modules' => [
         'DoctrineModule',
         'DoctrineORMModule',
-
+        'ZfrCors',
         'Kuai6\\Queue',
 
         'Server',

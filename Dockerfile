@@ -43,7 +43,7 @@ RUN yes | pecl install xdebug-2.6.0beta1 \
 COPY bin                bin
 COPY config             config
 COPY module             module
-COPY etc/supervisor     /etc/supervisor
+#COPY etc/supervisor     /etc/supervisor
 COPY public             public
 COPY vendor             vendor
 

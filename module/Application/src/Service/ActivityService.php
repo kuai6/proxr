@@ -4,10 +4,10 @@ namespace Application\Service;
 
 use Application\Entity\Activity;
 use Application\Entity\Bank;
+use Application\Entity\Status\Activity as ActivityStatus;
 use Application\EntityRepository\Device;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
-use Zend\EventManager\EventManagerInterface;
+
 
 /**
  * Class ActivityService
@@ -39,11 +39,7 @@ class ActivityService
     public function create($deviceId, $bit, $metadata)
     {
         $activity = new Activity();
-        /** @var EntityRepository $statusRepository */
-        $statusRepository = $this->entityManager->getRepository(\Application\Entity\Status\Activity::class);
-        /** @var \Application\Entity\Status\Activity $activityStatus */
-        $activityStatus = $statusRepository->find(2);
-        $activity->setStatus($activityStatus);
+        $activity->setStatus(ActivityStatus::STATUS_ACTIVE);
 
 
         /** @var Device $deviceRepository */

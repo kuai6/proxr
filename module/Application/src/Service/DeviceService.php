@@ -5,11 +5,10 @@ namespace Application\Service;
 use Application\Entity\Bank;
 use Application\Entity\Device;
 use Application\Entity\EventLog;
+use Application\Entity\Status\Device as DeviceStatus;
 use Application\Event\Event;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
-use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Log\Logger;
 
@@ -87,16 +86,12 @@ class DeviceService
             return $this->save($device);
         }
 
-        /** @var EntityRepository $statusRepository */
-        $statusRepository = $this->entityManager->getRepository(\Application\Entity\Status\Device::class);
-        /** @var \Application\Entity\Status\Device $status */
-        $status = $statusRepository->find(1);
         $device = new Device();
         $device->setName($serial);
         $device->setIp($ip)
             ->setPort($port)
             ->setLastPing(new \DateTime())
-            ->setStatus($status);
+            ->setStatus(DeviceStatus::STATUS_ACTIVE);
         $device = $this->save($device);
 
         $banksCollection = new ArrayCollection();
