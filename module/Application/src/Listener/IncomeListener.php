@@ -104,7 +104,7 @@ class IncomeListener extends AbstractListenerAggregate
                 'command' => ServerService::COMMAND_CONF,
                 'ip'    => $ip,
                 'port'  => $port,
-                'data'  => "\x00\x00\x13\x88\x00\x00\x01\xf4",
+                'data'  => "\x88\x13\x00\x00\xf4\x01\x00\x00",
             ]);
             $this->eventManager->trigger($outcome);
 

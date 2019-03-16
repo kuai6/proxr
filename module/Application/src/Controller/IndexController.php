@@ -217,6 +217,8 @@ class IndexController extends AbstractActionController
         $device_id = $this->getEvent()->getRouteMatch()->getParam("device_id");
         $periphery_type = $this->getEvent()->getRouteMatch()->getParam("periphery_type");
 
+        var_dump($device_id);
+
 //        $extractor = new PeripheryExtractor();
 //        $periphery = $this->peripheryService->registerUnit($device_id, $periphery_type);
 //        return new JsonModel($extractor->extract($periphery));

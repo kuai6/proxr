@@ -11,6 +11,7 @@ use Zend\Log\Logger;
 use Zend\Mvc\MvcEvent;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ModelInterface;
+use Zend\View\Model\ViewModel;
 
 /**
  * Class ExceptionListener
@@ -65,7 +66,7 @@ class RenderListener extends AbstractListenerAggregate
 
         // if we have a JsonModel in the result, then do nothing
         $currentModel = $event->getResult();
-        if ($currentModel instanceof JsonModel) {
+        if ($currentModel instanceof JsonModel || $currentModel instanceof ViewModel) {
             return;
         }
 
