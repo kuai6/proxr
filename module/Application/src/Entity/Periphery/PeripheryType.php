@@ -90,7 +90,7 @@ class PeripheryType
     /**
      * @return string
      */
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -106,7 +106,7 @@ class PeripheryType
     /**
      * @return string
      */
-    public function getIcon(): string
+    public function getIcon(): ?string
     {
         return $this->icon;
     }

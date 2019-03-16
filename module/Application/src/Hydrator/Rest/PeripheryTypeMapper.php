@@ -19,8 +19,8 @@ class PeripheryTypeMapper implements HydrationInterface
         return [
             'id' => $object->getId(),
             'name' => $object->getName(),
-            'description' => $object->getDescription(),
-            'icon' => $object->getIcon(),
+            'description' => $object->getDescription() ?:'',
+            'icon' => $object->getIcon() ?:'',
             'inputs' => $object->getInputs(),
             'outputs' => $object->getOutputs()
         ];
@@ -36,8 +36,8 @@ class PeripheryTypeMapper implements HydrationInterface
     public function hydrate(array $data, $object)
     {
         $object->setName($data['name']);
-        if ($data.contains('description')) $object->setDescription($data('description'));
-        if ($data.contains('icon')) $object->setDescription($data('icon'));
+        if (array_key_exists('description', $data)) $object->setDescription($data['description']);
+        if (array_key_exists('icon', $data)) $object->setIcon($data['icon']);
         $object->setInputs($data['inputs']);
         $object->setOutputs($data['outputs']);
 
