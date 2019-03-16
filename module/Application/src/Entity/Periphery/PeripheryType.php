@@ -5,10 +5,11 @@ namespace Application\Entity\Periphery;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
- *
  * Class PeripheryType
  * @package Application\Entity\Periphery
+ *
+ * @ORM\Entity(repositoryClass="Application\EntityRepository\PeripheryType")
+ * @ORM\Table(name="periphery_type")
  */
 class PeripheryType
 {
@@ -55,10 +56,26 @@ class PeripheryType
     }
 
     /**
+     * @param string $name
+     */
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
      * @return string
      */
     public function getDescription(): string
     {
         return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
     }
 }

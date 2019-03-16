@@ -2,12 +2,17 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Periphery\PeripheryType;
 use Application\Hydrator\Rest\DeviceHydrator;
+use Application\Hydrator\Rest\PeripheryTypeMapper;
 use Application\Options\ModuleOptions;
 use Application\Service\ActivityService;
 use Application\Service\DeviceService;
+use Application\Service\PeripheryService;
+use function PHPSTORM_META\map;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\JsonModel;
+use Zend\Json\Json;
 use OpenApi\Annotations as OA;
 
 /**
@@ -37,19 +42,27 @@ class IndexController extends AbstractActionController
     private $activityService;
 
     /**
+     * @var PeripheryService
+     */
+    private $peripheryService;
+
+    /**
      * IndexController constructor.
      * @param ModuleOptions $moduleOptions
      * @param DeviceService $deviceService
      * @param ActivityService $activityService
+     * @param PeripheryService $peripheryService
      */
     public function __construct(
         ModuleOptions $moduleOptions,
         DeviceService $deviceService,
-        ActivityService $activityService)
+        ActivityService $activityService,
+        PeripheryService $peripheryService)
     {
         $this->moduleOptions = $moduleOptions;
         $this->deviceService = $deviceService;
         $this->activityService = $activityService;
+        $this->peripheryService = $peripheryService;
     }
 
     /**
@@ -106,7 +119,7 @@ class IndexController extends AbstractActionController
     public function connectAction()
     {
         $request = $this->getRequest();
-        $obj = json_decode($request->getContent());
+        $obj = Json::decode($request->getContent());
         $this->activityService->create($obj->source->device->id, $obj->source->port, $obj->script);
 
         return new JsonModel(['result' => 'ok']);
@@ -136,8 +149,17 @@ class IndexController extends AbstractActionController
      *
      * @return JsonModel
      */
-    public function listPeripheryTypes()
+    public function listPeripheryTypesAction()
     {
+        $types = $this->peripheryService->listTypes();
+        $mapper = new PeripheryTypeMapper();
+        $result = [];
+
+        foreach ($types as $peripheryType) {
+            $result[] = $mapper->extract($peripheryType);
+        }
+
+        return new JsonModel($result);
     }
 
     /**
@@ -154,8 +176,15 @@ class IndexController extends AbstractActionController
      * )
      *
      */
-    public function registerPeripheryType()
+    public function registerPeripheryTypeAction()
     {
+        $mapper = new PeripheryTypeMapper();
+
+        $request = Json::decode($this->request->getContent(), Json::TYPE_ARRAY);
+        $requestObject = $mapper->hydrate($request, new PeripheryType());
+
+        $result = $this->peripheryService->createType($requestObject);
+        return new JsonModel($mapper->extract($result));
     }
 
     /**

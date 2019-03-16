@@ -32,6 +32,8 @@ use Application\Service\Queue as QueueService;
 use Application\Service\QueueFactory;
 use Application\Service\UdpService;
 use Application\Service\UdpServiceFactory;
+use Application\Service\PeripheryService;
+use Application\Service\PeripheryServiceFactory;
 use Kuai6\Queue\ServerFactory;
 use Zend\Mvc\Router\Http\Literal;
 use Zend\Mvc\Router\Http\Method;
@@ -64,7 +66,35 @@ return array_merge(
                     'may_terminate' => true,
                 ],
             ],
-
+            'periphery' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route'    => '/rest/v1/periphery'
+                ],
+                'may_terminate' => false,
+                'child_routes' => [
+                    'list' => [
+                        'type' => Method::class,
+                        'options' => [
+                            'verb' => 'GET',
+                            'defaults' => [
+                                'controller' => IndexController::class,
+                                'action'     => 'listPeripheryTypes',
+                            ]
+                        ]
+                    ],
+                    'create' => [
+                        'type' => Method::class,
+                        'options' => [
+                            'verb' => 'POST',
+                            'defaults' => [
+                                'controller' => IndexController::class,
+                                'action'     => 'registerPeripheryType',
+                            ]
+                        ]
+                    ]
+                ]
+            ],
             'connection' => [
                 'type' => Literal::class,
                 'options' => [
@@ -126,6 +156,7 @@ return array_merge(
 
             DeviceService::class    => DeviceServiceFactory::class,
             BankService::class      => BankServiceFactory::class,
+            PeripheryService::class => PeripheryServiceFactory::class,
             IncomeListener::class   => IncomeListenerFactory::class,
 
             ActivityService::class => ActivityServiceFactory::class,

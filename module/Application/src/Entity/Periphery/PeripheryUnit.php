@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @package Application\Entity\Periphery
  *
  * @ORM\Entity(repositoryClass="Application\EntityRepository\Periphery")
+ * @ORM\Table(name="periphery_unit")
 */
 class PeripheryUnit
 {
@@ -29,7 +30,7 @@ class PeripheryUnit
      * @var PeripheryType
      *
      * @ORM\ManyToOne(targetEntity="Application\Entity\Periphery\PeripheryType"), fetch="LAZY")
-     * @ORM\JoinColumn(name="typeId", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="type_id", referencedColumnName="id", nullable=false)
     */
     private $type;
 
@@ -38,7 +39,7 @@ class PeripheryUnit
      * @var Device
      *
      * @ORM\ManyToOne(targetEntity="Application\Entity\Device"))
-     * @ORM\JoinColumn(name="deviceId", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="device_id", referencedColumnName="id", nullable=false)
     */
     private $device;
 
@@ -47,7 +48,7 @@ class PeripheryUnit
      * @var Bank
      *
      * @ORM\ManyToOne(targetEntity="Application\Entity\Bank")
-     * @ORM\JoinColumn(name="bankId", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="bank_id", referencedColumnName="id", nullable=false)
     */
     private $bank;
 

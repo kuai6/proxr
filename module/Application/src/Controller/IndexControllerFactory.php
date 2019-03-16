@@ -5,6 +5,7 @@ namespace Application\Controller;
 use Application\Options\ModuleOptions;
 use Application\Service\ActivityService;
 use Application\Service\DeviceService;
+use Application\Service\PeripheryService;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -31,9 +32,11 @@ class IndexControllerFactory implements FactoryInterface
         $deviceService = $serviceLocator->get(DeviceService::class);
         /** @var ActivityService $activityService */
         $activityService = $serviceLocator->get(ActivityService::class);
+        /** @var PeripheryService $peripheryService */
+        $peripheryService = $serviceLocator->get(PeripheryService::class);
         /** @var ModuleOptions $moduleOptions */
         $moduleOptions = $serviceLocator->get(ModuleOptions::class);
 
-        return new IndexController($moduleOptions, $deviceService, $activityService);
+        return new IndexController($moduleOptions, $deviceService, $activityService, $peripheryService);
     }
 }
