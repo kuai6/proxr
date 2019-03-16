@@ -36,14 +36,11 @@ class DeviceTest extends AbstractHttpControllerTestCase
         $deviceRepository = $entityManager->getRepository(Device::class);
         static::assertInstanceOf(\Application\EntityRepository\Device::class, $deviceRepository);
 
-        /** @var \Application\Entity\Status\Device $status */
-        $status = $entityManager->find(\Application\Entity\Status\Device::class, 1);
-        static::assertInstanceOf(\Application\Entity\Status\Device::class, $status);
 
         $device = new Device();
 
         $device->setName(2);
-        $device->setStatus($status);
+        $device->setStatus(\Application\Entity\Status\Device::STATUS_ACTIVE);
         $device->setBanks(new ArrayCollection([
             new Bank\ContactClosure(),
             new Bank\Relay()
