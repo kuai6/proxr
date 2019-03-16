@@ -30,6 +30,14 @@ class Bank extends AbstractBank
     protected $name;
 
     /**
+     * Actual count of bit in banks, starting from 0
+     * @var integer
+     *
+     * @ORM\Column(name="available_bits_count", type="smallint")
+     */
+    protected $availableBitsCount;
+
+    /**
      * Bank bit 0
      * @var integer
      *
@@ -127,6 +135,22 @@ class Bank extends AbstractBank
     {
         $this->name = $name;
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAvailableBitsCount(): int
+    {
+        return $this->availableBitsCount;
+    }
+
+    /**
+     * @param int $availableBitsCount
+     */
+    public function setAvailableBitsCount(int $availableBitsCount): void
+    {
+        $this->availableBitsCount = $availableBitsCount;
     }
 
     /**
