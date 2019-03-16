@@ -62,6 +62,8 @@ services:
       POSTGRES_PASSWORD: developer
       POSTGRES_USER: developer
       POSTGRES_DB: proxr
+    volumes:
+      - /var/lib/proxr-postgres-data:/var/lib/postgresql/data
     networks:
       local:
         aliases:
