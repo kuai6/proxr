@@ -3,6 +3,7 @@
 namespace Application\Listener;
 
 use Application\Service\DeviceService;
+use Zend\Log\Logger;
 use Zend\Mvc\Application;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\FactoryInterface;
@@ -31,7 +32,9 @@ class IncomeListenerFactory implements FactoryInterface
         $deviceService = $serviceLocator->get(DeviceService::class);
         /** @var Application $application */
         $application = $serviceLocator->get('Application');
+        /** @var Logger $logger */
+        $logger = $serviceLocator->get('logger');
 
-        return new IncomeListener($application->getEventManager(), $deviceService);
+        return new IncomeListener($application->getEventManager(), $deviceService, $logger);
     }
 }

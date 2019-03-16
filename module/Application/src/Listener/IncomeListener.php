@@ -10,6 +10,7 @@ use Server\Service\ServerService;
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventInterface;
 use Zend\EventManager\EventManagerInterface;
+use Zend\Log\Logger;
 
 /**
  * Class IncomeListener
@@ -29,14 +30,24 @@ class IncomeListener extends AbstractListenerAggregate
     private $deviceService;
 
     /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
      * IncomeListener constructor.
      * @param EventManagerInterface $eventManager
      * @param DeviceService $deviceService
+     * @param Logger $logger
      */
-    public function __construct(EventManagerInterface $eventManager, DeviceService $deviceService)
+    public function __construct(
+        EventManagerInterface $eventManager,
+        DeviceService $deviceService,
+        Logger $logger)
     {
         $this->eventManager = $eventManager;
         $this->deviceService = $deviceService;
+        $this->logger = $logger;
     }
 
 
@@ -65,10 +76,27 @@ class IncomeListener extends AbstractListenerAggregate
         $ip = $event->getParam('ip');
         $port = $event->getParam('port');
 
-        $type = substr($data, 0,4);
+        $banksCount = ord(substr($data, 0,1));
+
+        $banks = [];
+        $pos = 1;
+        do {
+            $bData = substr($data, $pos,6);
+            $b = [
+                'type'  => substr($bData, 0,4),
+                'id'    => ord(substr($bData, 4, 1)),
+                'p_cnt' => ord(substr($bData, 5, 1)),
+            ];
+            $this->logger->debug(
+                sprintf("Received device bank info: id=%s, p_cnt=%d, type=%s",
+                    $b['id'], $b['p_cnt'], $b['type']));
+            $banks[] = $b;
+            $pos+=6;
+            $banksCount--;
+        }while($banksCount > 0);
 
         try {
-            $this->deviceService->registerDevice($type, $serial, $ip, $port);
+            $this->deviceService->registerDevice($serial, $ip, $port, $banks);
 
             $outcome = new OutcomeEvent();
             $outcome->setName('outcome.event.'. ServerService::COMMAND_CONF);
@@ -76,7 +104,7 @@ class IncomeListener extends AbstractListenerAggregate
                 'command' => ServerService::COMMAND_CONF,
                 'ip'    => $ip,
                 'port'  => $port,
-                'data'  => sprintf('%s%s', '5000', '0500'),
+                'data'  => "\x00\x00\x13\x88\x00\x00\x01\xf4",
             ]);
             $this->eventManager->trigger($outcome);
 
