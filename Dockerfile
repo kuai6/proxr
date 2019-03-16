@@ -11,9 +11,9 @@ RUN mkdir -p data/cache
 RUN apt-get update -y \
     && apt-get install --no-install-recommends -y \
     libpq-dev librabbitmq-dev libmemcached-dev zlib1g-dev git \
-    libjpeg-dev libpng-dev libfreetype6-dev \
+    libjpeg-dev libpng-dev libfreetype6-dev supervisor \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-    && docker-php-ext-install pdo pdo_pgsql pgsql bcmath zip \
+    && docker-php-ext-install pdo pdo_pgsql pgsql bcmath zip sockets \
     && rm -r /var/lib/apt/lists/*
 
 RUN pecl install amqp \
@@ -39,11 +39,13 @@ RUN echo "php_admin_value[error_reporting] = E_ALL & ~E_NOTICE" >> /usr/local/et
 COPY bin                bin
 COPY config             config
 COPY module             module
-#COPY etc/supervisord   /etc
+COPY etc/supervisor     /etc/supervisor
 COPY public             public
 COPY vendor             vendor
 
 COPY composer.json  composer.json
-
-EXPOSE 9000
+COPY entrypoint.sh  /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+EXPOSE 9000 9999
 CMD ["php-fpm"]
