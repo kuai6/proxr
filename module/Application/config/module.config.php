@@ -65,24 +65,19 @@ return array_merge(
                         'controller' => IndexController::class,
                         'action'     => 'devices',
                     ],
-                    'may_terminate' => true,
-                    'child_routes' => [
-                        'periphery' => [
-                            'type' => Segment::class,
-                            'options' => [
-                                'route' => '/:device_id/:periphery_type',
-                                'constraints' => [
-                                    'device_id'=> '[a-zA-Z][a-zA-Z0-9_-]*',
-                                    'periphery_type'=> '[a-zA-Z][a-zA-Z0-9_-]*'
-                                ],
-                                'defaults' => [
-                                    'controller' => IndexController::class,
-                                    'action'     => 'connectPeriphery',
-                                ]
-                            ]
-                        ]
-                    ]
+                    'may_terminate' => true
                 ],
+            ],
+            'device-periphery' => [
+                'type' => Segment::class,
+                'options' => [
+                    'verb' => "POST",
+                    'route' => '/rest/v1/devices/:device_id/periphery/:periphery_type',
+                    'defaults' => [
+                        'controller' => IndexController::class,
+                        'action'     => 'connectPeriphery',
+                    ]
+                ]
             ],
             'periphery' => [
                 'type' => Literal::class,
