@@ -8,6 +8,8 @@ cd $WORKDIR
 mkdir -p data/cache
 chmod 777 data/cache
 
+$PHP bin/shelled migrations:migrate  --no-interaction
+
 supervisord -c /etc/supervisor/supervisord.conf&
 
 exec "$@"
