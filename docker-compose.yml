@@ -10,7 +10,7 @@ services:
       XDEBUG_ENABLE: 0
       DO_MIGRATIONS: "true"
     depends_on:
-      - rabbitmq
+#      - rabbitmq
       - postgres
     networks:
       local:
@@ -68,14 +68,14 @@ services:
         aliases:
           - postgres.svc.local
 
-  rabbitmq:
-    image: rabbitmq:3.7.2-management
+#  rabbitmq:
+#    image: rabbitmq:3.7.2-management
 #    ports:
 #      - "15672:15672"
-    networks:
-      local:
-        aliases:
-          - rabbit.svc.local
+#    networks:
+#      local:
+#        aliases:
+#          - rabbit.svc.local
 networks:
   local:
     external:
