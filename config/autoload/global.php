@@ -4,15 +4,15 @@ return [
     'log' => [
         'logger' => [
             'errorHandler' => true,
-            'exceptionhandler' => true,
+            'exceptionHandler' => true,
             'writers' => [
                 'standard-output' => [
                     'name' => 'stream',
-                    'priority' => \Zend\Log\Logger::INFO,
+                    'priority' => \Zend\Log\Logger::DEBUG,
                     'options' => [
-                        'stream' => 'php://stdout',
-                    ]
-                ]
+                        'stream' => 'php://stderr',
+                    ],
+                ],
             ],
         ],
     ],

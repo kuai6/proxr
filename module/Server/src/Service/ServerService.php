@@ -96,7 +96,7 @@ class ServerService
             try {
                 $remote_ip = $remote_port = null;
                 //Receive some data
-                $len = socket_recvfrom($this->sock, $buf, 512, 0, $remote_ip, $remote_port);
+                $len = socket_recvfrom($this->sock, $buf, 2048, 0, $remote_ip, $remote_port);
                 if ($len > 0) {
                     // resolve message and trigger event into bus
                     $this->handle(trim($buf), $remote_ip, $remote_port);

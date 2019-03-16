@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
+use Zend\Log\Logger;
 
 /**
  * Class DeviceService
@@ -39,26 +40,39 @@ class DeviceService
     private $bankService;
 
     /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
      * DeviceService constructor.
      * @param EntityManager $entityManager
+     * @param BankService $bankService
+     * @param EventManagerInterface $eventManager
+     * @param Logger $logger
      */
-    public function __construct(EntityManager $entityManager, BankService $bankService, EventManagerInterface $eventManager)
+    public function __construct(
+        EntityManager $entityManager,
+        BankService $bankService,
+        EventManagerInterface $eventManager,
+        Logger $logger)
     {
         $this->entityManager = $entityManager;
         $this->bankService = $bankService;
         $this->eventManager = $eventManager;
+        $this->logger = $logger;
     }
 
     /**
-     * @param $type
      * @param $serial
      * @param $ip
      * @param $port
-     * @throws \Doctrine\ORM\OptimisticLockException
-     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @param $banks
+     * @return Device
      * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
-    public function registerDevice($type, $serial, $ip, $port)
+    public function registerDevice($serial, $ip, $port, $banks)
     {
         $bank = null;
 
@@ -73,26 +87,6 @@ class DeviceService
             return $this->save($device);
         }
 
-        switch (strtoupper($type)) {
-            case self::TYPE_RELAY;
-                $bank = new Bank\Relay();
-                break;
-
-            case self::TYPE_CONTACT_CLOSURE:
-                $bank = new Bank\ContactClosure();
-                break;
-
-            case self::TYPE_ADC:
-                $bank = new Bank\Adc();
-                break;
-
-            case self::TYPE_DAC:
-                $bank = new Bank\Dac();
-                break;
-            default;
-                throw new \RuntimeException('Unknown type');
-        }
-
         /** @var EntityRepository $statusRepository */
         $statusRepository = $this->entityManager->getRepository(\Application\Entity\Status\Device::class);
         /** @var \Application\Entity\Status\Device $status */
@@ -103,12 +97,37 @@ class DeviceService
             ->setPort($port)
             ->setLastPing(new \DateTime())
             ->setStatus($status);
+        $device = $this->save($device);
 
-        $this->save($device);
-        $bank->setDevice($device);
-        $bank->setName(0);
-        $this->bankService->save($bank);
-        $device->setBanks(new ArrayCollection([$bank]));
+        $banksCollection = new ArrayCollection();
+        foreach($banks as $b) {
+            switch (strtoupper($b['type'])) {
+                case self::TYPE_RELAY;
+                    $bank = new Bank\Relay();
+                    break;
+
+                case self::TYPE_CONTACT_CLOSURE:
+                    $bank = new Bank\ContactClosure();
+                    break;
+
+                case self::TYPE_ADC:
+                    $bank = new Bank\Adc();
+                    break;
+
+                case self::TYPE_DAC:
+                    $bank = new Bank\Dac();
+                    break;
+                default;
+                    throw new \RuntimeException('Unknown type');
+            }
+            $bank->setAvailableBitsCount($b['p_cnt']);
+            $bank->setName($b['id']);
+            $bank->setDevice($device);
+            $bank = $this->bankService->save($bank);
+            $banksCollection->add($bank);
+        }
+
+        $device->setBanks($banksCollection);
         return $device;
     }
 
