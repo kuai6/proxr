@@ -2,9 +2,5 @@
 
 exec docker run --rm -it \
  -v $PWD:/app \
- -v ~/.ssh:/home/$(id -un)/.ssh \
- -v $(mktemp -d):/tmp/cache \
- -v /etc/passwd:/etc/passwd:ro \
- -v /etc/group:/etc/group:ro \
- --user $(id -u):$(id -g) \
+ -v ~/.ssh:/root/.ssh \
  composer $@

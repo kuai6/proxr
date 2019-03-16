@@ -69,6 +69,8 @@ class ServerService
      */
     public function run()
     {
+        $this->logger->info("Running UDP server");
+
         //Create a UDP socket
         if(!($this->sock = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP)))
         {

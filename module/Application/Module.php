@@ -50,18 +50,6 @@ class Module implements ConfigProviderInterface, InitProviderInterface
     }
 
     /**
-     * @param AdapterInterface $console
-     * @return array
-     */
-    public function getConsoleUsage(AdapterInterface $console)
-    {
-        return [
-            'Shelled Controller',
-            'system init' => 'Init system'
-        ];
-    }
-
-    /**
      * Initialize workflow
      *
      * @param  ModuleManagerInterface $manager
