@@ -75,31 +75,25 @@ return array_merge(
             'device-periphery' => [
                 'type' => Segment::class,
                 'options' => [
-                    'route' => '/rest/v1/devices/:device_id/periphery/:periphery_type',
-                    'may_terminate' => true,
-                    'child_routes' => [
-                        'list-periphery' => [
-                            'type' => Method::class,
-                            'options' => [
-                                'verb' => 'GET',
-                                'defaults' => [
-                                    'controller' => PeripheryController::class,
-                                    'action' => 'listDevicePeriphery'
-                                ]
-                            ]
-                        ],
-                        'connect-periphery' => [
-                            'type' => Method::class,
-                            'options' => [
-                                'verb' => 'POST',
-                                'defaults' => [
-                                    'controller' => PeripheryController::class,
-                                    'action'     => 'connectDevicePeriphery',
-                                ]
-                            ]
-                        ]
-                    ]
+                    'route' => '/rest/v1/devices/:device_id/periphery',
+                    'defaults' => [
+                        'controller' => PeripheryController::class,
+                        'action' => 'listDevicePeriphery'
+                    ],
+                    'may_terminate' => true
                 ]
+            ],
+            'periphery-connect' => [
+                'type' => Segment::class,
+                'options' => [
+                    'verb'     => 'POST',
+                    'route'    => '/rest/v1/devices/:device_id/periphery/:periphery_type',
+                    'defaults' => [
+                        'controller' => PeripheryController::class,
+                        'action'     => 'connectDevicePeriphery',
+                    ],
+                    'may_terminate' => true
+                ],
             ],
             'all-periphery' => [
                 'type' => Literal::class,

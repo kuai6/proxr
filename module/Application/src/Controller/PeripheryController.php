@@ -76,10 +76,14 @@ class PeripheryController extends AbstractActionController
     }
 
     public function listAllPeripheryAction()
-    {}
+    {
+        return new JsonModel([]);
+    }
 
     public function listDevicePeripheryAction()
-    {}
+    {
+        return new JsonModel([]);
+    }
 
     /**
      * Register new periphery type
