@@ -30,7 +30,6 @@ final class Version20190316075210 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('ALTER TABLE periphery_unit DROP CONSTRAINT FK_527F0ABCC54C8C93');
         $this->addSql('DROP TABLE periphery_type');
         $this->addSql('DROP TABLE periphery_unit');
