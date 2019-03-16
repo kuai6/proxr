@@ -6,6 +6,8 @@ use Application\Activity\ActivityManager;
 use Application\Activity\ActivityManagerFactory;
 use Application\Activity\Invoker;
 use Application\Activity\InvokerFactory;
+use Application\Controller\ActivityController;
+use Application\Controller\ActivityControllerFactory;
 use Application\Controller\ConsoleController;
 use Application\Controller\ConsoleControllerFactory;
 use Application\Controller\DeviceController;
@@ -184,7 +186,7 @@ return array_merge(
             IndexController::class   => IndexControllerFactory::class,
             DeviceController::class   => DeviceControllerFactory::class,
             PeripheryController::class => PeripheryControllerFactory::class,
-            ActivityService::class => ActivityServiceFactory::class
+            ActivityController::class => ActivityControllerFactory::class
         ],
     ],
     'view_manager' => [
