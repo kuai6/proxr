@@ -31,13 +31,13 @@ class PeripheryController extends AbstractActionController
      * PeripheryController constructor.
      * @param PeripheryService $peripheryService
      * @param PeripheryTypeMapper $peripheryTypeMapper
-     * @param PeripheryExtractor $perypheryUnitMapper
+     * @param PeripheryExtractor $peripheryUnitMapper
      */
-    public function __construct(PeripheryService $peripheryService, PeripheryTypeMapper $peripheryTypeMapper, PeripheryExtractor $perypheryUnitMapper)
+    public function __construct(PeripheryService $peripheryService, PeripheryTypeMapper $peripheryTypeMapper, PeripheryExtractor $peripheryUnitMapper)
     {
         $this->peripheryService = $peripheryService;
         $this->peripheryTypeMapper = $peripheryTypeMapper;
-        $this->peripheryUnitMapper = $perypheryUnitMapper;
+        $this->peripheryUnitMapper = $peripheryUnitMapper;
     }
 
     /**
