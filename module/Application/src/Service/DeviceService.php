@@ -184,16 +184,16 @@ class DeviceService
             return null;
         }
 
-        $banksCount = ord($data{0});
+
+        $banksCount = ord(substr($data, 0, 1 ));
         if ($banksCount == 0) {
             return null;
         }
         /** @var \Application\EntityRepository\Bank $bankRepository */
         $bankRepository = $this->entityManager->getRepository(Bank::class);
-        $pos = 2;
+        $pos = 1;
         do {
             $bankId = ord(substr($data, $pos, 1 ));
-
             /** @var Bank $bank */
             $bank = $bankRepository->findOneBy(['name' => $bankId, 'device' => $device->getId()]);
             if (null === $bank) {
@@ -202,13 +202,11 @@ class DeviceService
 
             $bitLength = 1;
             if ($bank instanceof Bank\Adc || $bank instanceof Bank\Dac) {
-                $bitLength = 2;
+                $bitLength = $bank->getAvailableBitsCount() * 2;
             }
-
-            $dLen = $bank->getAvailableBitsCount() * $bitLength;
-
-            $this->handleBank($device, $bank, strpos($data, $pos+1, $dLen ));
-            $pos = $pos + 1 + $dLen;
+            $pos++;
+            $this->handleBank($device, $bank, substr($data, $pos, $bitLength));
+            $pos =+ $bitLength;
             $banksCount--;
         } while($banksCount > 0);
 
@@ -220,21 +218,25 @@ class DeviceService
     {
         /** @var \Application\EntityRepository\Bank $bankRepository */
         $bankRepository = $this->entityManager->getRepository(Bank::class);
-
         $bankBits = [];
         if($bank instanceof Bank\Adc) {
-
             $bits = str_split($data, $bank->getAvailableBitsCount()*2);
-
             for ($i = 0; $i < sizeof($bits); $i ++ ) {
                 $bankBits[$i] = ord($bits[$i]) ;
             }
         } else {
             $bankBits = [];
-            for ($i = 0; $i < 8; $i++) {
-                $bankBits[$i] = (!empty($value{$i})) ? $value{$i} : 0;
-            }
+            $data = ord($data);
+            $bankBits[0] = ($data & 1)  ==  1   ? 1 : 0;
+            $bankBits[1] = ($data & 2)  ==  2   ? 1 : 0;
+            $bankBits[2] = ($data & 4)  ==  4   ? 1 : 0;
+            $bankBits[3] = ($data & 8)  ==  8   ? 1 : 0;
+            $bankBits[4] = ($data & 16) ==  16  ? 1 : 0;
+            $bankBits[5] = ($data & 32) ==  32  ? 1 : 0;
+            $bankBits[6] = ($data & 64) ==  64  ? 1 : 0;
+            $bankBits[7] = ($data & 128)==  128 ? 1 : 0;
         }
+
 
         //remove bit direction
         $bankRepository->saveBitsDBAL($bank->getDevice()->getId(), $bank->getName(), $bankBits);
