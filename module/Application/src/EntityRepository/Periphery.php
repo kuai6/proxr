@@ -8,12 +8,12 @@ class Periphery extends EntityRepository
 {
     public function findByBit($deviceId, $bankId, $bit)
     {
-        return $this->findOneBy(['device_id' => $deviceId, 'bank_id' => $bankId, 'bit' => $bit]);
+        return $this->findOneBy(['device' => $deviceId, 'bank' => $bankId, 'bit' => $bit]);
     }
 
     public function findByDevice($device_id)
     {
-        return $this->findBy(['device_id' => $device_id]);
+        return $this->findBy(['device' => $device_id]);
     }
 
     public function save($entity)

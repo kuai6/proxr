@@ -89,7 +89,7 @@ class PeripheryController extends AbstractActionController
 
     public function listDevicePeripheryAction()
     {
-        $device_id = $this->getEvent()->getRouteMatch()->getParam('$device_id');
+        $device_id = $this->getEvent()->getRouteMatch()->getParam('device_id');
         $units = $this->peripheryService->listDeviceUnits($device_id);
         $result = [];
 
