@@ -135,7 +135,7 @@ class Device extends AbstractActivity
                     $value = $context->get($this->getValue());
                 }
 
-                $result = $command->set($bank, $this->getBit(), $value);
+                //$result = $command->set($bank, $this->getBit(), $value);
 
                 $outcome = new OutcomeEvent();
                 $outcome->setName('outcome.event.'. ServerService::COMMAND_DATA);
@@ -143,7 +143,7 @@ class Device extends AbstractActivity
                     'command' => ServerService::COMMAND_DATA,
                     'ip'    => $device->getIp(),
                     'port'  => $device->getPort(),
-                    'data'  => $result,
+                    'data'  => pack('c*', 1, 0, $value)
                 ]);
 
                 $eventManager->trigger($outcome);

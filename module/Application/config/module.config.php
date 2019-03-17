@@ -151,8 +151,8 @@ return array_merge(
                             'verb' => 'GET',
                             'defaults' => [
                                 'controller' => ActivityController::class,
-                                'action' => 'listActivities'
-                            ]
+                                'action' => 'listActivities',
+                            ],
                         ]
                     ],
                     'create-activity' => [
@@ -161,7 +161,24 @@ return array_merge(
                             'verb' => 'POST',
                             'defaults' => [
                                 'controller' => ActivityController::class,
-                                'action' => 'createActivity'
+                                'action' => 'createActivity',
+                                \ZfrCors\Options\CorsOptions::ROUTE_PARAM => [
+                                    'allowed_methods' => ['POST', 'OPTIONS'],
+                                    'allowed_origins' => ['*'],
+                                    'allowed_headers' => [
+                                        'Authorization', 'X-Requested-With', 'Content-Type'
+                                    ],
+                                ]
+                            ]
+                        ]
+                    ],
+                    'create-activity-ok' => [
+                        'type' => Method::class,
+                        'options' => [
+                            'verb' => 'OPTIONS',
+                            'defaults' => [
+                                'controller' => IndexController::class,
+                                'action' => 'ok',
                             ]
                         ]
                     ]

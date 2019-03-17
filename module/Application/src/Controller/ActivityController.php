@@ -34,7 +34,10 @@ class ActivityController extends AbstractActionController
         /** @var Activity $requestObject */
         $requestObject = $this->activityMapper->hydrate($request, new Activity());
 
-        $result = $this->activityService->create($requestObject->getDevice()->getId(), $requestObject->getBit());
+        $result = $this->activityService->create(
+            $requestObject->getDevice()->getId(),
+            $requestObject->getBank()->getId(),
+            $requestObject->getBit());
         return new JsonModel($this->activityMapper->extract($result));
     }
 

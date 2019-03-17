@@ -42,4 +42,9 @@ class IndexController extends AbstractActionController
         return new JsonModel(json_decode($openapi->toJson(), true));
     }
 
+    public function okAction()
+    {
+        return new JsonModel();
+    }
+
 }
