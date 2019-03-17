@@ -41,6 +41,7 @@ class ActivityMapper implements HydratorInterface
             'name' => $object->getName(),
             'description' => $object->getDescription() ?: '',
             'periphery_id' => $peripheryUnit->getId(),
+            'device_id' => $peripheryUnit->getDevice()->getId(),
             'event_type' => ($object->getOn() == Activity::ACTIVITY_BIT_RAISE) ? 'on_rise' : 'on_down',
             'nodes' => $object->getNodes(),
             'links' => $object->getLinks()

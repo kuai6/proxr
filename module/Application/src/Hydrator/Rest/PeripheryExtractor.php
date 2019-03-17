@@ -18,6 +18,8 @@ class PeripheryExtractor implements ExtractionInterface
         return [
             'id' => $object->getId(),
             'type_id' => $object->getType()->getId(),
+            'name' => $object->getName() ?: '',
+            'description' => $object->getDescription() ?: '',
             'device_id' => $object->getDevice()->getId(),
             'bank_id' => $object->getBank()->getId(),
             'bit' => $object->getBit()

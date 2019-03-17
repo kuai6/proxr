@@ -17,4 +17,10 @@ class Periphery extends EntityRepository
         );
     }
 
+    public function findByDevice($device_id)
+    {
+        return $this->findBy(
+            Criteria::create()
+                ->where(Criteria::expr()->eq('device_id', $device_id)));
+    }
 }

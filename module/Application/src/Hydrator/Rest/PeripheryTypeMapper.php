@@ -36,6 +36,7 @@ class PeripheryTypeMapper implements HydrationInterface
     public function hydrate(array $data, $object)
     {
         $object->setName($data['name']);
+        $object->setBankType($data['bank-type']);
         if (array_key_exists('description', $data)) $object->setDescription($data['description']);
         if (array_key_exists('icon', $data)) $object->setIcon($data['icon']);
         $object->setInputs($data['inputs']);

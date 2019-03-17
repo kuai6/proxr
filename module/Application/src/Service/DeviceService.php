@@ -273,4 +273,12 @@ class DeviceService
         return $deviceRepository->findAll();
 
     }
+
+    public function get(int $device_id): Device
+    {
+        /** @var \Application\EntityRepository\Device $deviceRepository */
+        $deviceRepository = $this->entityManager->getRepository(Device::class);
+
+        return $deviceRepository->find($device_id);
+    }
 }

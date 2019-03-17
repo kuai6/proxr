@@ -34,7 +34,7 @@ class ActivityController extends AbstractActionController
         /** @var Activity $requestObject */
         $requestObject = $this->activityMapper->hydrate($request, new Activity());
 
-        $result = $this->activityService->create($requestObject->getDevice()->getId(), $requestObject->getBit(), "");
+        $result = $this->activityService->create($requestObject->getDevice()->getId(), $requestObject->getBit());
         return new JsonModel($this->activityMapper->extract($result));
     }
 
@@ -72,8 +72,11 @@ class ActivityController extends AbstractActionController
     public function updateActivityAction()
     {
         $activity_id = $this->getEvent()->getRouteMatch()->getParam("activity_id");
+        $request = Json::decode($this->request->getContent(), Json::TYPE_ARRAY);
+        /** @var Activity $requestObject */
+        $requestObject = $this->activityMapper->hydrate($request, new Activity());
 
-        $activity = $this->activityService->update($activity_id);
+        $activity = $this->activityService->update($activity_id, $requestObject);
         return new JsonModel($this->activityMapper->extract($activity));
     }
 }

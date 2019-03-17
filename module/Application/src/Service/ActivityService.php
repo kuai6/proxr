@@ -36,7 +36,7 @@ class ActivityService
         $this->bankService = $bankService;
     }
 
-    public function create(int $deviceId, int $bit, string $metadata): Activity
+    public function create(int $deviceId, int $bit): Activity
     {
         $activity = new Activity();
         $activity->setStatus(ActivityStatus::STATUS_ACTIVE);
@@ -54,8 +54,6 @@ class ActivityService
         $activity->setBit($bit);
 
         $activity->setEvent('event.contactClosure');
-
-        $activity->setMetadata($metadata);
         $activity->setOn('rise');
 
         $this->entityManager->persist($activity);
@@ -71,8 +69,25 @@ class ActivityService
     }
 
     public function get(int $id): Activity
-    {}
+    {
+        $repository = $this->entityManager->getRepository(Activity::class);
+        return $repository->find($id);
+    }
 
-    public function update(int $id): Activity
-    {}
+    public function update(int $id, Activity $activity): Activity
+    {
+        $repository = $this->entityManager->getRepository(Activity::class);
+        $entity = $repository->find($id);
+
+        $entity->setName($activity->getName());
+        $entity->setDescription($activity->getDescription());
+        $entity->setLinks($activity->getLinks());
+        $entity->setNodes($activity->getNodes());
+        $entity->setMetadata($activity->getMetadata());
+
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush($entity);
+
+        return $entity;
+    }
 }

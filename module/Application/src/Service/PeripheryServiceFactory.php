@@ -2,6 +2,8 @@
 
 namespace Application\Service;
 
+use Application\Entity\Periphery\PeripheryType;
+use Application\EntityRepository\Periphery;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Doctrine\ORM\EntityManager;
@@ -22,10 +24,15 @@ class PeripheryServiceFactory implements FactoryInterface
             $serviceLocator = $serviceLocator->getServiceLocator();
         }
 
+        /** @var DeviceService $deviceService */
+        $deviceService = $serviceLocator->get(DeviceService::class);
         /** @var EntityManager $entityManager */
         $entityManager = $serviceLocator->get('ApplicationEntityManager');
+        /** @var \Application\EntityRepository\PeripheryType $typesRepository */
+        $typesRepository = $entityManager->getRepository(PeripheryType::class);
+        /** @var \Application\EntityRepository\Periphery $unitsRepository */
+        $unitsRepository = $entityManager->getRepository(Periphery::class);
 
-
-        return new PeripheryService($entityManager);
+        return new PeripheryService($deviceService, $entityManager, $typesRepository, $unitsRepository);
     }
 }

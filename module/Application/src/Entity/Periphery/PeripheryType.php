@@ -73,6 +73,22 @@ class PeripheryType
     private $bankType;
 
     /**
+     * @return string
+     */
+    public function getBankType(): string
+    {
+        return $this->bankType;
+    }
+
+    /**
+     * @param string $bankType
+     */
+    public function setBankType(string $bankType): void
+    {
+        $this->bankType = $bankType;
+    }
+
+    /**
      * @return int
      */
     public function getId(): int
