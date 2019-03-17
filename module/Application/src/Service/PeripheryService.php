@@ -83,6 +83,8 @@ class PeripheryService
         $bit = 0;
 
         $unit = new PeripheryUnit();
+        $unit->setName('');
+        $unit->setDescription('');
         $unit->setType($peripheryType);
         $unit->setDevice($device);
         $unit->setBank($bank);
