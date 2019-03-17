@@ -23,4 +23,12 @@ class Periphery extends EntityRepository
             Criteria::create()
                 ->where(Criteria::expr()->eq('device_id', $device_id)));
     }
+
+    public function save($entity)
+    {
+        $em = $this->getEntityManager();
+        $em->persist($entity);
+        $em->flush($entity);
+        return $em;
+    }
 }
