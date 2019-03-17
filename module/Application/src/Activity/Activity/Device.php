@@ -99,23 +99,25 @@ class Device extends AbstractActivity
                     $entityManager->flush($bank);
 
                     $result = $command->$method($bank, $this->getBit());
-
+                    $v = [];
+                    for ($i =0; $i < $bank->getAvailableBitsCount(); $i++) {
+                        $getter = 'getBit'.$i;
+                        $v[] = $bank->$getter();
+                    }
                     $outcome = new OutcomeEvent();
                     $outcome->setName('outcome.event.'. ServerService::COMMAND_DATA);
                     $outcome->setParams([
                         'command' => ServerService::COMMAND_DATA,
                         'ip'    => $device->getIp(),
                         'port'  => $device->getPort(),
-                        'data'  => $result,
+                        'data' => pack('ccc', 1, $bank->getName(), bindec(implode($v, ''))),
                     ]);
-
                     $eventManager->trigger($outcome);
                 }
                 if ($this->getAction() === self::ACTION_GET) {
                     $getter = 'getBit' . $this->getBit();
                     $result = $bank->{$getter}();
                 }
-
 
                 break;
             case $bank instanceof Bank\ContactClosure:

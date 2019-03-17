@@ -11,18 +11,17 @@ use Doctrine\ORM\EntityRepository;
 class Activity extends EntityRepository
 {
 
-    public function getActivitiesDBAL($eventName, $deviceId, $bankName)
+    public function getActivitiesDBAL($eventName, $deviceId, $bankId)
     {
         $query = $this->getEntityManager()->getConnection()->createQueryBuilder();
         $query->select('a.*')
             ->from($this->getClassMetadata()->getTableName(), 'a')
-            ->innerJoin('a', $this->getEntityManager()->getClassMetadata(\Application\Entity\Bank::class)->getTableName(), 'b', 'b.id = a.bankId')
             ->where('a.event = :eventName')
             ->andWhere('a.deviceId = :deviceId')
-            ->andWhere('b.name = :bankName')
+            ->andWhere('a.bankId = :bankId')
             ->setParameter('eventName', $eventName)
             ->setParameter('deviceId', $deviceId)
-            ->setParameter('bankName', $bankName);
+            ->setParameter('bankId', $bankId);
         return $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

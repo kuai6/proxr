@@ -20,7 +20,7 @@ class ServerService
     const COMMAND_PONG  = 'PONG';
     const COMMAND_DATA  = 'DATA';
     const COMMAND_CONF  = 'CONF';
-
+    const COMMAND_DGET  = 'DGET';
 
     /**
      * @var ModuleOptions
