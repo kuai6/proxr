@@ -29,6 +29,6 @@ class Periphery extends EntityRepository
         $em = $this->getEntityManager();
         $em->persist($entity);
         $em->flush($entity);
-        return $em;
+        return $entity;
     }
 }
