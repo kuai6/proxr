@@ -64,8 +64,8 @@ class ActivityMapper implements HydratorInterface
         $object->setDevice($peripheryUnit->getDevice());
         $object->setBank($peripheryUnit->getBank());
         $object->setBit($peripheryUnit->getBit());
-        $object->setNodes($data['nodes']);
-        $object->setLinks($data['links']);
+        $object->setNodes(json_encode($data['nodes']));
+        $object->setLinks(json_encode($data['links']));
         $object->setOn($data['event_type'] == 'on_rise' ? Activity::ACTIVITY_BIT_RAISE : Activity::ACTIVITY_BIT_FALL);
         $event = '';
         switch (true) {
