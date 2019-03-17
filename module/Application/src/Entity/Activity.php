@@ -158,7 +158,7 @@ class Activity extends AbstractActivity
     /**
      * @return string
      */
-    public function getNodes(): string
+    public function getNodes(): ?string
     {
         return $this->nodes;
     }
@@ -174,7 +174,7 @@ class Activity extends AbstractActivity
     /**
      * @return string
      */
-    public function getLinks(): string
+    public function getLinks(): ?string
     {
         return $this->links;
     }
