@@ -36,7 +36,7 @@ class ActivityService
         $this->bankService = $bankService;
     }
 
-    public function create(int $deviceId, int $bit): Activity
+    public function create(int $deviceId, int $bankId, int $bit): Activity
     {
         $activity = new Activity();
         $activity->setStatus(ActivityStatus::STATUS_ACTIVE);
@@ -47,7 +47,10 @@ class ActivityService
         /** @var \Application\Entity\Device $device */
         $device = $deviceRepository->find($deviceId);
         /** @var Bank $bank */
-        $bank = $device->getBanks()->first();
+        $bank = $device->getBanks()->filter(function ($bank) use($bankId) {
+            /** @var Bank $bank */
+            return $bank->getId() == $bankId;
+        })->first();
 
         $activity->setDevice($device);
         $activity->setBank($bank);
