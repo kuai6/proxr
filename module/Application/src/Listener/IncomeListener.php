@@ -79,21 +79,26 @@ class IncomeListener extends AbstractListenerAggregate
         $banksCount = ord(substr($data, 0,1));
 
         $banks = [];
-        $pos = 1;
-        do {
-            $bData = substr($data, $pos,6);
-            $b = [
-                'type'  => substr($bData, 0,4),
-                'id'    => ord(substr($bData, 4, 1)),
-                'p_cnt' => ord(substr($bData, 5, 1)),
-            ];
-            $this->logger->debug(
-                sprintf("Received device bank info: id=%s, p_cnt=%d, type=%s",
-                    $b['id'], $b['p_cnt'], $b['type']));
-            $banks[] = $b;
-            $pos+=6;
-            $banksCount--;
-        }while($banksCount > 0);
+        if ($banksCount > 0) {
+            $pos = 1;
+            do {
+                $bData = substr($data, $pos, 6);
+                if (strlen($bData) < 6) {
+                    break;
+                }
+                $b = [
+                    'type' => substr($bData, 0, 4),
+                    'id' => ord(substr($bData, 4, 1)),
+                    'p_cnt' => ord(substr($bData, 5, 1)),
+                ];
+                $this->logger->debug(
+                    sprintf("Received device bank info: id=%s, p_cnt=%d, type=%s",
+                        $b['id'], $b['p_cnt'], $b['type']));
+                $banks[] = $b;
+                $pos += 6;
+                $banksCount--;
+            } while ($banksCount > 0);
+        }
 
         try {
             $this->deviceService->registerDevice($serial, $ip, $port, $banks);
@@ -111,7 +116,6 @@ class IncomeListener extends AbstractListenerAggregate
         } catch (\Exception $e) {
             throw $e;
         }
-
     }
 
     public function onPing(EventInterface $event)

@@ -116,6 +116,11 @@ class ServerService
      */
     public function handle($data, $ip, $port)
     {
+        if (strlen($data) < 12) {
+            $this->logger->err("Message corrupted");
+            return;
+        }
+
         $command = substr($data, 0,4);
         $serialNumber = substr($data, 4,8);
         $payload = substr($data, 12);
