@@ -138,6 +138,64 @@ return array_merge(
                     ]
                 ]
             ],
+            'activities' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/rest/v1/activities',
+                ],
+                'may_terminate' => false,
+                'child_routes' => [
+                    'list-activities' => [
+                        'type' => Method::class,
+                        'options' => [
+                            'verb' => 'GET',
+                            'defaults' => [
+                                'controller' => ActivityController::class,
+                                'action' => 'listActivities'
+                            ]
+                        ]
+                    ],
+                    'create-activity' => [
+                        'type' => Method::class,
+                        'options' => [
+                            'verb' => 'POST',
+                            'defaults' => [
+                                'controller' => ActivityController::class,
+                                'action' => 'createActivity'
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            'activity' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/rest/v1/activities/:activity_id'
+                ],
+                'may_terminate' => false,
+                'child_routes' => [
+                    'get-activity' => [
+                        'type' => Method::class,
+                        'options' => [
+                            'verb' => 'GET',
+                            'defaults' => [
+                                'controller' => ActivityController::class,
+                                'action' => 'getActivity'
+                            ]
+                        ]
+                    ],
+                    'update-activity' => [
+                        'type' => Method::class,
+                        'options' => [
+                            'verb' => 'PUT',
+                            'defaults' => [
+                                'controller' => ActivityController::class,
+                                'action' => 'updateActivity'
+                            ]
+                        ]
+                    ]
+                ]
+            ]
         ],
     ],
     'service_manager' => [

@@ -36,7 +36,7 @@ class ActivityService
         $this->bankService = $bankService;
     }
 
-    public function create($deviceId, $bit, $metadata)
+    public function create($deviceId, $bit, $metadata): Activity
     {
         $activity = new Activity();
         $activity->setStatus(ActivityStatus::STATUS_ACTIVE);
@@ -60,6 +60,8 @@ class ActivityService
 
         $this->entityManager->persist($activity);
         $this->entityManager->flush($activity);
+
+        return $activity;
     }
 
     /**

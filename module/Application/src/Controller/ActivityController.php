@@ -2,6 +2,7 @@
 
 namespace Application\Controller;
 
+use Application\Entity\Activity;
 use Application\Hydrator\Rest\ActivityMapper;
 use Application\Service\ActivityService;
 use Zend\Json\Json;
@@ -27,28 +28,16 @@ class ActivityController extends AbstractActionController
         $this->activityMapper = $activityMapper;
     }
 
-    /**
-     * @return JsonModel
-     */
-    public function connectAction()
+    public function createActivityAction()
     {
-        $request = $this->getRequest();
-        $obj = Json::decode($request->getContent());
-        $this->activityService->create($obj->source->device->id, $obj->source->port, $obj->script);
-
-        return new JsonModel(['result' => 'ok']);
-    }
-
-//    public function createActivityAction()
-//    {
-//        $mapper = new ActivityMapper($this->);
-//
 //        $request = Json::decode($this->request->getContent(), Json::TYPE_ARRAY);
-//        $requestObject = $mapper->hydrate($request, new Activity());
+//        /** @var Activity $requestObject */
+//        $requestObject = $this->activityMapper->hydrate($request, new Activity());
 //
-//        $result = $this->activityService->create($requestObject);
-//        return new JsonModel($mapper->extract($result));
-//    }
+//        $result = $this->activityService->create($requestObject->getDevice()->getId(), $requestObject->getBit(), "");
+//        return new JsonModel($this->activityMapper->extract($result));
+        return new JsonModel(['method' => 'create activity']);
+    }
 
     public function listActivitiesAction()
     {
@@ -64,7 +53,7 @@ class ActivityController extends AbstractActionController
 
     public function getActivityAction()
     {
-
+        return new JsonModel(['method' => 'get activity']);
     }
 
     /**
@@ -80,6 +69,6 @@ class ActivityController extends AbstractActionController
      */
     public function updateActivityAction()
     {
-
+        return new JsonModel(['method' => 'update activity']);
     }
 }
