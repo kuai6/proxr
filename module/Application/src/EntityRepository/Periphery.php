@@ -13,7 +13,7 @@ class Periphery extends EntityRepository
 
     public function findByDevice($device_id)
     {
-        return $this->findBy(['device_id' => $device_id]);
+        return $this->findBy(['device'=> $device_id]);
     }
 
     public function save($entity)
