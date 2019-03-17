@@ -3,6 +3,9 @@
 namespace Application\Hydrator\Rest;
 
 use Application\Entity\Activity;
+use Application\Entity\Bank\Adc;
+use Application\Entity\Bank\ContactClosure;
+use Application\Event\Event;
 use Application\Service\PeripheryService;
 use Zend\Hydrator\HydratorInterface;
 
@@ -61,8 +64,18 @@ class ActivityMapper implements HydratorInterface
         $object->setBank($peripheryUnit->getBank());
         $object->setBit($peripheryUnit->getBit());
         $object->setNodes($data['nodes']);
-        $object->setOn($data['links']);
-        $object->setEvent(
-            $data['event_type'] == 'on_rise' ? Activity::ACTIVITY_BIT_RAISE : Activity::ACTIVITY_BIT_FALL);
+        $object->setOn($data['event_type'] == 'on_rise' ? Activity::ACTIVITY_BIT_RAISE : Activity::ACTIVITY_BIT_FALL);
+        $event = '';
+        switch (true) {
+            case $peripheryUnit->getBank() instanceof Adc:
+                $event = Event::EVENT_ADC;
+                break;
+            case $peripheryUnit->getBank() instanceof ContactClosure:
+                $event = Event::EVENT_CONTACT_CLOSURE;
+                break;
+        }
+        $object->setEvent($event);
+
+        return $object;
     }
 }
