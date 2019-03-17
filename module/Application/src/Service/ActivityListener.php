@@ -5,6 +5,7 @@ namespace Application\Service;
 use Application\Activity\ActivityManager;
 use Application\Activity\Invoker;
 use Application\Event\Event;
+use Doctrine\Common\Util\Debug;
 use Doctrine\ORM\EntityManager;
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventManagerInterface;
@@ -55,6 +56,9 @@ class ActivityListener extends AbstractListenerAggregate
         /** @var \Application\EntityRepository\Activity $activityRepository */
         $activityRepository = $this->entityManager->getRepository(\Application\Entity\Activity::class);
         $activities = $activityRepository->getActivitiesDBAL($event->getName(), $event->getDevice(), $event->getBank());
+        if (sizeof($activities) === 0) {
+            return false;
+        }
 
         foreach($activities as $activityData) {
             /** @var \Application\Activity\Activity\Activity $activity */

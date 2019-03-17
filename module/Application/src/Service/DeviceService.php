@@ -146,7 +146,8 @@ class DeviceService
         }
 
         $device->setLastPing(new \DateTime());
-
+        $device->setIp($ip);
+        $device->setPort($port);
         $this->save($device);
 
         return null;
@@ -256,7 +257,7 @@ class DeviceService
         }
 
         $event->setDevice($bank->getDevice()->getId())
-            ->setBank($bank->getName())
+            ->setBank($bank->getId())
             ->setBits($bankBits)
             ->setEventLog($eventLog);
         $this->eventManager->trigger($event);
