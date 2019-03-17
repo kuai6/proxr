@@ -77,5 +77,7 @@ class ActivityMapper implements HydratorInterface
                 break;
         }
         $object->setEvent($event);
+
+        return $object;
     }
 }
