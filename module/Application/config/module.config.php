@@ -171,6 +171,16 @@ return array_merge(
                                 ]
                             ]
                         ]
+                    ],
+                    'create-activity-ok' => [
+                        'type' => Method::class,
+                        'options' => [
+                            'verb' => 'OPTIONS',
+                            'defaults' => [
+                                'controller' => IndexController::class,
+                                'action' => 'ok',
+                            ]
+                        ]
                     ]
                 ]
             ],
