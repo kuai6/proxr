@@ -68,21 +68,36 @@ class PeripheryController extends AbstractActionController
         $types = $this->peripheryService->listTypes();
         $result = [];
 
-        foreach ($types as $peripheryType) {
+        foreach ($types as $peripheryType)
+        {
             $result[] =$this->peripheryTypeMapper->extract($peripheryType);
         }
-
         return new JsonModel($result);
     }
 
     public function listAllPeripheryAction()
     {
-        return new JsonModel([]);
+        $units = $this->peripheryService->listAllUnits();
+        $result = [];
+
+        foreach ($units as $peripheryUnit)
+        {
+            $result[] = $this->peripheryUnitMapper->extract($peripheryUnit);
+        }
+        return new JsonModel([$result]);
     }
 
     public function listDevicePeripheryAction()
     {
-        return new JsonModel([]);
+        $device_id = $this->getEvent()->getRouteMatch()->getParam('$device_id');
+        $units = $this->peripheryService->listDeviceUnits($device_id);
+        $result = [];
+
+        foreach ($units as $peripheryUnit)
+        {
+            $result[] = $this->peripheryUnitMapper->extract($peripheryUnit);
+        }
+        return new JsonModel([$result]);
     }
 
     /**
@@ -136,15 +151,7 @@ class PeripheryController extends AbstractActionController
         $device_id = $this->getEvent()->getRouteMatch()->getParam("device_id");
         $periphery_type = $this->getEvent()->getRouteMatch()->getParam("periphery_type");
 
-//        $extractor = new PeripheryExtractor();
-//        $periphery = $this->peripheryService->registerUnit($device_id, $periphery_type);
-//        return new JsonModel($extractor->extract($periphery));
-        return new JsonModel([
-            'id' => 0,
-            'type_id' => $periphery_type,
-            'device_id' => $device_id,
-            'bank_id' => 0,
-            'bit' => 0
-        ]);
+        $periphery = $this->peripheryService->registerUnit($device_id, $periphery_type);
+        return new JsonModel($this->peripheryUnitMapper->extract($periphery));
     }
 }

@@ -53,7 +53,7 @@ class ActivityMapper implements HydratorInterface
      */
     public function hydrate(array $data, $object)
     {
-        $peripheryUnit = $this->peripheryService->find($data['periphery_id']);
+        $peripheryUnit = $this->peripheryService->getUnit($data['periphery_id']);
 
         $object->setName($data['name']);
         if (array_key_exists('description', $data)) $object->setDescription($data['description']);

@@ -41,13 +41,21 @@ class PeripheryService
         return $newType;
     }
 
+    public function findUnit(int $device_id, int $bank_id, int $bit): PeripheryUnit
+    {
+
+    }
+
+    public function getUnit(int $id): PeripheryUnit
+    {}
+
     public function listAllUnits(): array
     {
         $typesRepo = $this->entityManager->getRepository(PeripheryUnit::class);
         return $typesRepo->findAll();
     }
 
-    public function listDeviceUnits(): array
+    public function listDeviceUnits(int $device_id): array
     {}
 
     public function registerUnit(string $device_id, string $periphery_type): PeripheryUnit

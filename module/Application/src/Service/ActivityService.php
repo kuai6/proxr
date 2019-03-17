@@ -36,7 +36,7 @@ class ActivityService
         $this->bankService = $bankService;
     }
 
-    public function create($deviceId, $bit, $metadata): Activity
+    public function create(int $deviceId, int $bit, string $metadata): Activity
     {
         $activity = new Activity();
         $activity->setStatus(ActivityStatus::STATUS_ACTIVE);
@@ -64,12 +64,15 @@ class ActivityService
         return $activity;
     }
 
-    /**
-     * @return array
-     */
-    public function list()
+    public function list(): array
     {
         $repository = $this->entityManager->getRepository(Activity::class);
         return $repository->findAll();
     }
+
+    public function get(int $id): Activity
+    {}
+
+    public function update(int $id): Activity
+    {}
 }

@@ -30,13 +30,12 @@ class ActivityController extends AbstractActionController
 
     public function createActivityAction()
     {
-//        $request = Json::decode($this->request->getContent(), Json::TYPE_ARRAY);
-//        /** @var Activity $requestObject */
-//        $requestObject = $this->activityMapper->hydrate($request, new Activity());
-//
-//        $result = $this->activityService->create($requestObject->getDevice()->getId(), $requestObject->getBit(), "");
-//        return new JsonModel($this->activityMapper->extract($result));
-        return new JsonModel(['method' => 'create activity']);
+        $request = Json::decode($this->request->getContent(), Json::TYPE_ARRAY);
+        /** @var Activity $requestObject */
+        $requestObject = $this->activityMapper->hydrate($request, new Activity());
+
+        $result = $this->activityService->create($requestObject->getDevice()->getId(), $requestObject->getBit(), "");
+        return new JsonModel($this->activityMapper->extract($result));
     }
 
     public function listActivitiesAction()
@@ -53,7 +52,10 @@ class ActivityController extends AbstractActionController
 
     public function getActivityAction()
     {
-        return new JsonModel(['method' => 'get activity']);
+        $activity_id = $this->getEvent()->getRouteMatch()->getParam("activity_id");
+
+        $activity = $this->activityService->get($activity_id);
+        return new JsonModel($this->activityMapper->extract($activity));
     }
 
     /**
@@ -69,6 +71,9 @@ class ActivityController extends AbstractActionController
      */
     public function updateActivityAction()
     {
-        return new JsonModel(['method' => 'update activity']);
+        $activity_id = $this->getEvent()->getRouteMatch()->getParam("activity_id");
+
+        $activity = $this->activityService->update($activity_id);
+        return new JsonModel($this->activityMapper->extract($activity));
     }
 }
